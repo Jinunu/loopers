@@ -74,4 +74,43 @@ class UserServiceIntegrationTest {
             assertThat(exception.getCustomMessage()).contains("이미 존재하는 ID");
         }
     }
+
+    @DisplayName("내 정보 조회")
+    @Nested
+    class get {
+        @DisplayName("해당 ID의 회원이 존재할 경우, 회원 정보가 반환된다.")
+        @Test
+        void returnUserInfo_whenExistUserId(){
+            // arrange
+            UserModel userModel = new UserModel("shwlsdn", "shwlsdn123@asd.cd", "1994-08-19", "M");
+            userJpaRepository.save(userModel);
+
+            // act
+            UserModel result = userService.findByUserId("shwlsdn");
+
+            // assert
+            assertAll(
+                    () -> assertThat(result.getUserId()).isEqualTo(userModel.getUserId()),
+                    () -> assertThat(result.getEmail()).isEqualTo(userModel.getEmail()),
+                    () -> assertThat(result.getBirthDate()).isEqualTo(userModel.getBirthDate()),
+                    () -> assertThat(result.getGender()).isEqualTo(userModel.getGender())
+
+            );
+        }
+    }
+
+    @DisplayName("해당 ID의 회원이 존재하지 않을 경우, null을 반환 한다.")
+    @Test
+    void returnNull_whenNotExistUserId(){
+        // arrange
+        String userId = "abcedfg";
+
+        // act
+        UserModel result = userService.findByUserId(userId);
+
+        // assert
+        assertThat(result).isNull();
+    }
+
+
 }
