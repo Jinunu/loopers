@@ -22,7 +22,7 @@ public class UserModel extends BaseEntity {
     private String birthDate;
 
     public UserModel(String userId, String email, String birthDate, String gender){
-        if (userId == null || userId.isBlank() || userId.length() > 10 || containsSpecialChar(userId)) {
+        if (!isValidUserId(userId)) {
             throw new CoreException(BAD_REQUEST, "영문 및 숫자 10자 이내로 입력해 주세요.");
         }
         if (gender == null || gender.isBlank()){
@@ -35,6 +35,11 @@ public class UserModel extends BaseEntity {
         if (!isValidBirthDate(birthDate)){
             throw new CoreException(BAD_REQUEST, "생년월일 형식에 맞지 않습니다.");
         }
+
+        this.userId = userId;
+        this.email = email;
+        this.birthDate = birthDate;
+        this.gender = gender;
 
     }
 
@@ -55,6 +60,11 @@ public class UserModel extends BaseEntity {
 
     public String getBirthDate() {
         return birthDate;
+    }
+
+    private boolean isValidUserId(String userId){
+        String userIdRegex = "^[a-zA-Z0-9]{1,10}$";
+        return userId != null && userId.matches(userIdRegex);
     }
 
     private boolean isValidBirthDate(String birthDate) {
@@ -79,7 +89,7 @@ public class UserModel extends BaseEntity {
     }
 
     public boolean isEmail(String email){
-        String emailRegex = "^(.+)@(\\S+)$";
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         if (email == null || email.isBlank()) {
             return false;
         }
