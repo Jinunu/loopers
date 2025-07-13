@@ -10,10 +10,19 @@ public interface UserV1ApiSpec {
 
     @Operation(
         summary = "회원 가입",
-        description = "ID, 이메일, 생년월일, 성별"
+        description = "ID, 이메일, 생년월일, 성별 정보로 회원 가입"
     )
     ApiResponse<UserV1Dto.UserResponse> signUp(
-        @Schema(name = "회원가입", description = "회원가입")
+        @Schema(name = "회원가입 요청 Dto", description = "회원가입 요청 Dto")
         UserV1Dto.UserRequest userRequest
+    );
+
+    @Operation(
+            summary = "내 정보 조회",
+            description = "회원의 ID로 회원 정보 조회"
+    )
+    ApiResponse<UserV1Dto.UserResponse> myProfile(
+            @Schema(name = "회원의 ID", description = "조회 할 회원의 ID")
+            String userId
     );
 }
