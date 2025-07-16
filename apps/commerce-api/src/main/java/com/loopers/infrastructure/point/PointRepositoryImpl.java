@@ -21,4 +21,9 @@ public class PointRepositoryImpl implements PointRepository {
         pointJpaRepository.save(point);
     }
 
+    @Override
+    public void chargePoint(String userPoint, Long amount) {
+
+    }
+
 }

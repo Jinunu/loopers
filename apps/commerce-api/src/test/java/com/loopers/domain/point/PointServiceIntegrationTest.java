@@ -1,14 +1,17 @@
 package com.loopers.domain.point;
 
+import com.loopers.support.error.CoreException;
+import com.loopers.support.error.ErrorType;
 import com.loopers.utils.DatabaseCleanUp;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 class PointServiceIntegrationTest {
@@ -21,7 +24,7 @@ class PointServiceIntegrationTest {
     @Autowired
     private PointService pointService;
 
-    @Autowired
+    @MockitoSpyBean
     private PointRepository pointRepository;
 
     @Autowired
@@ -70,6 +73,30 @@ class PointServiceIntegrationTest {
             assertThat(point).isNull();
         }
 
+
+        @DisplayName("포인트 충전")
+        @Nested
+        class chargePoint{
+
+            @DisplayName("존재하지 않는 유저 ID 로 충전을 시도한 경우, 실패한다.")
+            @Test
+            void failsChargePoint_when(){
+
+                //arrange
+                String nonExistUserId = "nonExistUserId";
+                doReturn(null).when(pointRepository).findByUserId(nonExistUserId);
+
+                // act
+                CoreException result = assertThrows(CoreException.class, () -> {
+                    pointService.chargePoint(nonExistUserId, 1000L);
+                });
+
+                // assert
+                assertThat(result.getErrorType()).isEqualTo(ErrorType.NOT_FOUND);
+
+            }
+
+        }
 
     }
 
