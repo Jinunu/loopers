@@ -6,5 +6,4 @@ public interface PointRepository {
 
     void save(PointEntity point);
 
-    void chargePoint(String userPoint, Long amount);
 }

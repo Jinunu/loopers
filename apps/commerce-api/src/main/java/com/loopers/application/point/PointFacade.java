@@ -12,12 +12,17 @@ import org.springframework.stereotype.Component;
 public class PointFacade {
     private final PointService pointService;
 
-    public PointInfo getPoint(String userId){
+    public PointInfo getPoint(String userId) {
         PointEntity point = pointService.getPointByUserId(userId);
 
         if (point == null) {
             throw new CoreException(ErrorType.BAD_REQUEST);
         }
+        return PointInfo.from(point);
+    }
+
+    public PointInfo chargePoint(PointInfo pointInfo) {
+        PointEntity point = pointService.chargePoint(pointInfo);
         return PointInfo.from(point);
     }
 }

@@ -19,9 +19,10 @@ public class PointEntity extends BaseEntity {
     private String userId;
     private Long amount;
 
-    public void chargeAmount(Long amount) {
+    void chargeAmount(Long amount) {
         if (amount <= 0) {
             throw new CoreException(ErrorType.BAD_REQUEST, "0이하의 포인트는 충전 할 수 없습니다.");
         }
+        this.amount += amount;
     }
 }

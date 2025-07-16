@@ -8,4 +8,10 @@ public class PointV1Dto {
             return new PointResponse(pointInfo.point());
         }
     }
+
+    public record PointChargeRequest(Long point) {
+        public static PointChargeRequest from(Long point) {
+            return new PointChargeRequest(point);
+        }
+    }
 }
