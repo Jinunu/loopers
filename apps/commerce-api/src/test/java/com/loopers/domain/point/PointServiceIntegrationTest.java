@@ -3,7 +3,6 @@ package com.loopers.domain.point;
 import com.loopers.application.point.PointInfo;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
-import com.loopers.utils.DatabaseCleanUp;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class PointServiceIntegrationTest {
@@ -23,19 +23,6 @@ class PointServiceIntegrationTest {
     @MockitoSpyBean
     private PointRepository pointRepository;
 
-    @Autowired
-    private DatabaseCleanUp databaseCleanUp;
-
-    @BeforeEach
-    void setUp() {
-        pointRepository.save(new PointEntity("shwlsdn", 1000L));
-    }
-
-    @AfterEach
-    void tearDown() {
-        databaseCleanUp.truncateAllTables();
-    }
-
     @DisplayName("포인트 조회")
     @Nested
     class get {
@@ -45,8 +32,10 @@ class PointServiceIntegrationTest {
         void returnPoint_whenUserExists() {
             // arrange
             String userId = "shwlsdn";
+            PointEntity pointEntity = new PointEntity(userId, 1000L);
+            when(pointRepository.findByUserId(userId)).thenReturn(pointEntity);
             // act
-            PointEntity point = pointService.getPointByUserId(userId);
+            PointEntity point = pointService.getPointByUserId(pointEntity.getUserId());
 
             // assert
             assertAll(
@@ -62,6 +51,8 @@ class PointServiceIntegrationTest {
         void returnNull_whenUserNotExists() {
             // arrange
             String userId = "shassdsadwlsdn";
+            doReturn(null).when(pointRepository).findByUserId(userId);
+
             // act
             PointEntity point = pointService.getPointByUserId(userId);
 
@@ -76,10 +67,10 @@ class PointServiceIntegrationTest {
 
             @DisplayName("존재하지 않는 유저 ID 로 충전을 시도한 경우, 실패한다.")
             @Test
-            void failsChargePoint_when(){
+            void failsChargePoint_whenNonExistUserId(){
 
                 //arrange
-                String nonExistUserId = "nonExistUserId";
+                String nonExistUserId = "shwlsdn";
                 doReturn(null).when(pointRepository).findByUserId(nonExistUserId);
 
                 // act
