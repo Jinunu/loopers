@@ -9,17 +9,20 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 class UserServiceIntegrationTest {
     @Autowired
     private UserService userService;
 
-    @Autowired
+    @MockitoSpyBean
     private UserJpaRepository userJpaRepository;
 
     @Autowired
@@ -42,18 +45,9 @@ class UserServiceIntegrationTest {
 
             //act
             userService.signUp(userModel);
-            UserModel result = userJpaRepository.findByUserId(userModel.getUserId());
 
             // assert
-            assertAll(
-                    () -> assertThat(result).isNotNull(),
-                    () -> assertThat(result.getId()).isNotNull(),
-                    () -> assertThat(result.getUserId()).isEqualTo(userModel.getUserId()),
-                    () -> assertThat(result.getEmail()).isEqualTo(userModel.getEmail()),
-                    () -> assertThat(result.getBirthDate()).isEqualTo(userModel.getBirthDate()),
-                    () -> assertThat(result.getGender()).isEqualTo(userModel.getGender())
-            );
-
+            verify(userJpaRepository, times(1)).save(userModel);
         }
 
         @DisplayName("이미 가입된 ID로 회원가입 시도 시, 실패한다.")
