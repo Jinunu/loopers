@@ -1,19 +1,23 @@
 package com.loopers.domain.product;
 
+import com.loopers.domain.BaseEntity;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Getter;
 
+@Entity
+@Table(name = "product")
 @Getter
-public class Product {
+public class Product  extends BaseEntity {
 
-    private Long id;
+
     private String name;
     private String imageUrl;
     private int price;
     private int quantity;
-
-    private Product() {
+    protected Product() {
     }
 
     protected Product(String name, String imageUrl, int price, int quantity) {
@@ -25,6 +29,7 @@ public class Product {
         }
         this.quantity = quantity;
     }
+
 
     public static Product of(String name, String imageUrl, int price, int quantity) {
         return new Product(name, imageUrl, price, quantity);

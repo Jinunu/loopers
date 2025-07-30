@@ -1,7 +1,6 @@
 package com.loopers.domain.brand;
 
 import com.loopers.domain.product.Product;
-import com.loopers.domain.product.Products;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -40,10 +39,11 @@ public class BrandTest {
 
         //act
         brand.addProduct(product);
-        Products products = brand.getProducts();
-        int productCount = products.count();
+        int  productCount = brand.getProducts().size();
+
         // assert
         assertThat(productCount).isEqualTo(1);
 
     }
+
 }

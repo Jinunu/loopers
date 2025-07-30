@@ -1,6 +1,7 @@
 package com.loopers.domain.product;
 
 import com.loopers.domain.brand.Brand;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -20,7 +21,7 @@ public class ProductInfoServiceTest {
 
     private static final int LIKE_COUNT = 500;
 
-
+    @DisplayName("상품, 브랜드, 좋아요 수로 상품 정보를 생성한다.")
     @Test
     void createProductInfoTest(){
         // arrange
@@ -32,7 +33,7 @@ public class ProductInfoServiceTest {
         ReflectionTestUtils.setField(brand, "id", BRAND_ID);
 
         // act
-        ProductInfo productInfo = ProductInfoService.createProductInfo(product, brand, LIKE_COUNT);
+        ProductInfo productInfo = new ProductInfoService().createProductInfo(product, brand, LIKE_COUNT);
 
         // assert
         assertAll(
