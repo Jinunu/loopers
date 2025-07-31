@@ -20,7 +20,7 @@ public class Brand extends BaseEntity {
     private String name;
     private String imageUrl;
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "brand_id", nullable = false)
+    @JoinColumn(name = "brand_id")
     private final List<Product> products = new ArrayList<>();
 
     protected Brand(String name, String imageUrl) {

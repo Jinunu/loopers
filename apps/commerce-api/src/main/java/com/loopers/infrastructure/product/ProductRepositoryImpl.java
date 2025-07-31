@@ -27,4 +27,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     public List<Product> findAll() {
         return productJpaRepository.findAll();
     }
+
+    @Override
+    public Optional<Product> findByName(String productName) {
+        return productJpaRepository.findByName(productName);
+    }
 }

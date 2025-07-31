@@ -14,4 +14,5 @@ public interface BrandJpaRepository extends JpaRepository<Brand, Long> {
     @Query("SELECT DISTINCT b FROM Brand b JOIN FETCH b.products p WHERE p.id IN :productIds")
     List<Brand> findAllByProductIds(@Param("productIds") List<Long> productIds);
 
+    Optional<Brand> findByName(String brandName);
 }
