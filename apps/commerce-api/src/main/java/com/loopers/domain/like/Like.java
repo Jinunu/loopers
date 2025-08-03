@@ -37,5 +37,7 @@ public class Like extends BaseEntity {
        return new Like(product, userModel );
     }
 
-
+    public boolean isLiked(UserModel userModel) {
+        return userModel.equals(this.userModel);
+    }
 }
