@@ -1,5 +1,6 @@
 package com.loopers.domain.like;
 
+import com.loopers.domain.brand.Brand;
 import com.loopers.domain.brand.BrandRepository;
 import com.loopers.domain.product.Product;
 import com.loopers.domain.product.ProductRepository;
@@ -23,6 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class LikeServiceIntegrationTest {
+
+    private static final String BRAND_NAME = "나이키";
+    private static final String BRAND_IMAGE_URL = "https://example.com/brand.jpg";
+    private static final Long BRAND_ID = 1L;
 
     private static final String PRODUCT_NAME = "신발";
     private static final String PRODUCT_IMAGE_URL = "https://example.com/image.jpg";
@@ -53,7 +58,9 @@ public class LikeServiceIntegrationTest {
     @Test
     public void likeProduct() {
         // arrange
-        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY);
+        Brand brand = Brand.of(BRAND_NAME, BRAND_IMAGE_URL);
+        Brand savedBrand = brandRepository.save(brand);
+        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, savedBrand.getId() );
         productRepository.save(product);
         Product findProduct = productRepository.findByName(PRODUCT_NAME).orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -74,7 +81,9 @@ public class LikeServiceIntegrationTest {
     @Test
     void shouldNotAddLikeWhenUserLikesProductTwice() {
         // arrange
-        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY);
+        Brand brand = Brand.of(BRAND_NAME, BRAND_IMAGE_URL);
+        Brand savedBrand = brandRepository.save(brand);
+        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, savedBrand.getId());
         productRepository.save(product);
         Product findProduct = productRepository.findByName(PRODUCT_NAME).orElseThrow(() -> new RuntimeException("Product not found"));
 

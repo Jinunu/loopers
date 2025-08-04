@@ -1,7 +1,6 @@
 package com.loopers.domain.product;
 
 import com.loopers.domain.brand.Brand;
-import com.loopers.domain.like.Like;
 import com.loopers.domain.like.LikeInfo;
 import com.loopers.domain.user.UserModel;
 import org.junit.jupiter.api.DisplayName;
@@ -36,12 +35,12 @@ public class ProductInfoServiceTest {
     @Test
     void createProductInfoTest(){
         // arrange
-        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY);
-        ReflectionTestUtils.setField(product, "id", PRODUCT_ID);
-
 
         Brand brand = Brand.of(BRAND_NAME, BRAND_IMAGE_URL);
         ReflectionTestUtils.setField(brand, "id", BRAND_ID);
+
+        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, brand.getId());
+        ReflectionTestUtils.setField(product, "id", PRODUCT_ID);
 
         UserModel userModel = new UserModel(USER_NAME, USER_EMAIL, USER_BIRTH_DATE, GENDER);
         ReflectionTestUtils.setField(userModel, "id", USER_ID);

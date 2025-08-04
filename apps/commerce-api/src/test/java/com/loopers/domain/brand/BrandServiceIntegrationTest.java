@@ -77,7 +77,7 @@ public class BrandServiceIntegrationTest {
         Brand brand = Brand.of(BRAND_NAME, BRAND_IMAGE_URL);
         ReflectionTestUtils.setField(brand, "id", BRAND_ID);
 
-        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY);
+        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, brand.getId());
         ReflectionTestUtils.setField(product, "id", PRODUCT_ID);
 
         brand.addProduct(product);
@@ -120,8 +120,8 @@ public class BrandServiceIntegrationTest {
         ReflectionTestUtils.setField(brand1, "id", 1L);
         ReflectionTestUtils.setField(brand2, "id", 2L);
 
-        Product product1 = Product.of("나이키 신발", "nike-shoe.jpg", 89000, 5);
-        Product product2 = Product.of("아디다스 운동화", "adidas-shoe.jpg", 79000, 3);
+        Product product1 = Product.of("나이키 신발", "nike-shoe.jpg", 89000, 5, brand1.getId());
+        Product product2 = Product.of("아디다스 운동화", "adidas-shoe.jpg", 79000, 3, brand2.getId());
         ReflectionTestUtils.setField(product1, "id", 1L);
         ReflectionTestUtils.setField(product2, "id", 2L);
 

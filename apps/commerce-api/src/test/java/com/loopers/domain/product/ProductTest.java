@@ -25,7 +25,7 @@ public class ProductTest {
         int price = 10000;
         int quantity = 10;
 
-        Product product = Product.of(name, imageUrl, price, quantity);
+        Product product = Product.of(name, imageUrl, price, quantity, 1L);
         Assertions.assertAll(() -> assertThat(product.getName()).isEqualTo(name), () -> assertThat(product.getImageUrl()).isEqualTo(imageUrl), () -> assertThat(product.getPrice()).isEqualTo(price), () -> assertThat(product.getQuantity()).isEqualTo(quantity));
 
     }
@@ -34,7 +34,7 @@ public class ProductTest {
     @Test
     void product_Decrease_Quantity() {
         // arrange
-        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY);
+        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, 1L);
         ReflectionTestUtils.setField(product, "id", PRODUCT_ID);
         int minusQuantity = 10;
         int currentQuantity = product.getQuantity();
@@ -52,7 +52,7 @@ public class ProductTest {
     @Test
     void throwsBadRequestException_whenMinusQuantityIsNegative() {
         // arrange
-        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY);
+        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, 1L);
         // act and assert
         assertThatThrownBy(() -> product.decreaseQuantity(-3)).isInstanceOf(CoreException.class).hasFieldOrPropertyWithValue("errorType", ErrorType.BAD_REQUEST);
 
@@ -62,7 +62,7 @@ public class ProductTest {
     @Test
     void throwsBadRequestException_whenMinusQuantityIsGreaterThanAvailableQuantity() {
         // arange
-        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY);
+        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, 1L);
         int currentQuantity = product.getQuantity();
 
         // act and assert

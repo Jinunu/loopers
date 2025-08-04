@@ -3,8 +3,7 @@ package com.loopers.domain.product;
 import com.loopers.domain.BaseEntity;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 @Entity
@@ -17,10 +16,12 @@ public class Product  extends BaseEntity {
     private String imageUrl;
     private int price;
     private int quantity;
+    @Column(name = "brand_id", nullable = false)
+    private Long brandId;
     protected Product() {
     }
 
-    protected Product(String name, String imageUrl, int price, int quantity) {
+    protected Product(String name, String imageUrl, int price, int quantity, Long brandId) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.price = price;
@@ -28,11 +29,13 @@ public class Product  extends BaseEntity {
             throw new CoreException(ErrorType.BAD_REQUEST);
         }
         this.quantity = quantity;
+        this.brandId = brandId;
     }
 
 
-    public static Product of(String name, String imageUrl, int price, int quantity) {
-        return new Product(name, imageUrl, price, quantity);
+    public static Product of(String name, String imageUrl, int price, int quantity, Long brandId) {
+
+        return new Product(name, imageUrl, price, quantity, brandId);
     }
 
     public void decreaseQuantity(int quantity) {

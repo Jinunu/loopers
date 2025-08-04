@@ -25,7 +25,7 @@ public class LikeInfoTest {
     @Test
     void createLikeInfoTest() {
         // arrange
-        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY);
+        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, 1L);
         ReflectionTestUtils.setField(product, "id", PRODUCT_ID);
         UserModel userModel = new UserModel(USER_NAME, USER_EMAIL, USER_BIRTH_DATE, GENDER);
         ReflectionTestUtils.setField(userModel, "id", USER_ID);
@@ -44,7 +44,7 @@ public class LikeInfoTest {
     @Test
     void createLikeInfoWithoutLikeTest() {
         // arrange
-        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY);
+        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, 1L);
         ReflectionTestUtils.setField(product, "id", PRODUCT_ID);
         UserModel userModel = new UserModel(USER_NAME, USER_EMAIL, USER_BIRTH_DATE, GENDER);
         ReflectionTestUtils.setField(userModel, "id", USER_ID);

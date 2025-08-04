@@ -30,12 +30,14 @@ public class BrandTest {
         int price = 10000;
         int quantity = 10;
 
-        Product product = Product.of(name, productImageUrl, price, quantity);
-        ReflectionTestUtils.setField(product, "id", 3L);
+
 
         String brandName = "나이스";
         Brand brand = Brand.of(brandName, brandImageUrl);
         ReflectionTestUtils.setField(brand, "id", 1L);
+
+        Product product = Product.of(name, productImageUrl, price, quantity, brand.getId());
+        ReflectionTestUtils.setField(product, "id", 3L);
 
         //act
         brand.addProduct(product);

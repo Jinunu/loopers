@@ -47,7 +47,7 @@ public class ProductServiceIntegrationTest {
     @Test
     void getProduct() {
         // arrange
-        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY);
+        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, 1L);
         ReflectionTestUtils.setField(product, "id", PRODUCT_ID);
         doReturn(Optional.of(product))
                 .when(productRepository)
@@ -107,7 +107,7 @@ public class ProductServiceIntegrationTest {
     }
 
     private Product createProduct(Long id, String name, String imageUrl, int price, int quantity) {
-        Product product = Product.of(name, imageUrl, price, quantity);
+        Product product = Product.of(name, imageUrl, price, quantity, 1L);
         ReflectionTestUtils.setField(product, "id", id);
         return product;
     }

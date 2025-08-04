@@ -16,7 +16,7 @@ public class LikeTest {
     @Test
     public void likeProduct() {
         // arrange
-        Product product = Product.of("Test Product", "https://example.com/image.jpg", 10000, 10);
+        Product product = Product.of("Test Product", "https://example.com/image.jpg", 10000, 10, 1L);
         ReflectionTestUtils.setField(product, "id", 1L);
         UserModel userModel = new UserModel("testuser", "shwlsdn@naver.com", "2001-01-01", "M");
         ReflectionTestUtils.setField(userModel, "id", 1L);
@@ -34,7 +34,7 @@ public class LikeTest {
     @Test
     public void isLiked_ReturnsTrue_WhenUserIsSame() {
         // arrange
-        Product product = Product.of("Test Product", "https://example.com/image.jpg", 10000, 10);
+        Product product = Product.of("Test Product", "https://example.com/image.jpg", 10000, 10, 1L);
         ReflectionTestUtils.setField(product, "id", 1L);
         UserModel userModel = new UserModel("testuser", "shwlsdn@naver.com", "2001-01-01", "M");
         ReflectionTestUtils.setField(userModel, "id", 1L);
@@ -53,7 +53,7 @@ public class LikeTest {
     @Test
     public void isLiked_ReturnsFalse_WhenUserIsDifferent() {
         // arrange
-        Product product = Product.of("Test Product", "https://example.com/image.jpg", 10000, 10);
+        Product product = Product.of("Test Product", "https://example.com/image.jpg", 10000, 10, 1L);
         ReflectionTestUtils.setField(product, "id", 1L);
         UserModel userModel = new UserModel("testuser", "shwlsdn@naver.com", "2001-01-01", "M");
         ReflectionTestUtils.setField(userModel, "id", 1L);
