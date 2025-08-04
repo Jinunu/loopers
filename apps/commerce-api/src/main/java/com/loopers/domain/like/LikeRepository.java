@@ -12,5 +12,7 @@ public interface LikeRepository {
     List<Like> findByProductId(Long productId);
 
 
-    Optional<Object> findByProductIdAndUserId(Long productId, Long userId);
+    Optional<Like> findByProductIdAndUserId(Long productId, Long userId);
+
+    int countByProductId(Long productId);
 }

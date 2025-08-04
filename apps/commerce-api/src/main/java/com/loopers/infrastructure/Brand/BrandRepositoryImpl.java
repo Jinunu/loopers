@@ -14,8 +14,8 @@ public class BrandRepositoryImpl implements BrandRepository {
     private final BrandJpaRepository brandJpaRepository;
 
     @Override
-    public void save(Brand brand) {
-        brandJpaRepository.save(brand);
+    public Brand save(Brand brand) {
+      return brandJpaRepository.save(brand);
     }
 
     @Override

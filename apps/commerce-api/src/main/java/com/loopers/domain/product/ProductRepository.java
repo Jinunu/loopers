@@ -7,7 +7,7 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository {
-    void save(Product product);
+    Product save(Product product);
 
     Optional<Product> findById(Long id);
 

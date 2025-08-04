@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 public class UserRepositoryImpl implements UserRepository {
     private final UserJpaRepository userJpaRepository;
 
-    public void save(UserModel userModel) {
-        userJpaRepository.save(userModel);
-    };
+    public UserModel save(UserModel userModel) {
+        return userJpaRepository.save(userModel);
+    }
 
     public UserModel findByUserId(String userId){
         return userJpaRepository.findByUserId(userId);

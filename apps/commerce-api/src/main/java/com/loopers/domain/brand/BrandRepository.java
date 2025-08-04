@@ -7,7 +7,7 @@ import java.util.Optional;
 
 @Repository
 public interface BrandRepository {
-    void save(Brand brand);
+    Brand save(Brand brand);
 
     Optional<Brand> findById(Long brandId);
 

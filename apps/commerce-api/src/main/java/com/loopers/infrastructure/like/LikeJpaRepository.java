@@ -1,6 +1,7 @@
 package com.loopers.infrastructure.like;
 
 import com.loopers.domain.like.Like;
+import com.loopers.domain.product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,5 +13,8 @@ public interface LikeJpaRepository extends JpaRepository<Like, Long> {
     List<Like> findByProductId(Long productId);
 
     @Query("SELECT l FROM Like l WHERE l.product.id = ?1 AND l.userModel.id = ?2")
-    Optional<Object> findByProductIdAndUserId(Long productId, Long userId);
+    Optional<Like> findByProductIdAndUserId(Long productId, Long userId);
+
+    @Query("SELECT COUNT(l) FROM Like l WHERE l.product.id = ?1")
+    int countByProductId(Long productId);
 }
