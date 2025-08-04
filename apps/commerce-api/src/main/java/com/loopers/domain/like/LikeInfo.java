@@ -16,16 +16,8 @@ public class LikeInfo {
         this.isLiked = isLiked;
     }
 
-    public static LikeInfo from(Like like, int likeCount, UserModel loginUser) {
-        if (like == null) {
-            return new LikeInfo(null, 0, false);
-        }
 
-        boolean isLiked = false;
-        if (loginUser != null) {
-            isLiked = like.isLiked(loginUser);
-        }
-
-        return new LikeInfo(like.getProduct().getId(), likeCount, isLiked);
+    public static LikeInfo from(Long ProductId, int likeCount, boolean isLiked) {
+        return new LikeInfo(ProductId, likeCount, isLiked);
     }
 }

@@ -1,13 +1,18 @@
 package com.loopers.domain.product;
 
 import com.loopers.domain.brand.Brand;
+import com.loopers.domain.like.Like;
+import com.loopers.domain.like.LikeInfo;
+import com.loopers.domain.user.UserModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@SpringBootTest
 public class ProductInfoServiceTest {
     private static final String PRODUCT_NAME = "신발";
     private static final String PRODUCT_IMAGE_URL = "https://example.com/image.jpg";
@@ -21,7 +26,13 @@ public class ProductInfoServiceTest {
 
     private static final int LIKE_COUNT = 500;
 
-    @DisplayName("상품, 브랜드, 좋아요 수로 상품 정보를 생성한다.")
+    private static final String USER_NAME = "testuser";
+    private static final String USER_EMAIL = "shwlsdn@naver.com";
+    private static final String USER_BIRTH_DATE = "2001-01-01";
+    private static final String GENDER = "M";
+    private static final Long USER_ID = 1L;
+
+    @DisplayName("상품, 브랜드, 좋아요 정보로 상품 정보를 생성한다.")
     @Test
     void createProductInfoTest(){
         // arrange
@@ -32,8 +43,14 @@ public class ProductInfoServiceTest {
         Brand brand = Brand.of(BRAND_NAME, BRAND_IMAGE_URL);
         ReflectionTestUtils.setField(brand, "id", BRAND_ID);
 
+        UserModel userModel = new UserModel(USER_NAME, USER_EMAIL, USER_BIRTH_DATE, GENDER);
+        ReflectionTestUtils.setField(userModel, "id", USER_ID);
         // act
-        ProductInfo productInfo = new ProductInfoService().createProductInfo(product, brand, LIKE_COUNT);
+        LikeInfo likeInfo = LikeInfo.from(product.getId(), LIKE_COUNT, false);
+
+        // act
+        ProductInfo productInfo =  new ProductInfoService().createProductInfo(product, brand, likeInfo);
+
 
         // assert
         assertAll(
@@ -56,4 +73,5 @@ public class ProductInfoServiceTest {
         );
 
     }
+
 }

@@ -31,11 +31,11 @@ public class LikeInfoTest {
         ReflectionTestUtils.setField(userModel, "id", USER_ID);
         Like like = Like.likeProduct(product, userModel);
         // act
-        LikeInfo likeInfo = LikeInfo.from(like, LIKE_COUNT, userModel);
+        LikeInfo likeInfo = LikeInfo.from(product.getId(), LIKE_COUNT, false);
 
         // assert
         assertThat(likeInfo.getProductId()).isEqualTo(product.getId());
-        assertThat(likeInfo.getIsLiked()).isTrue();
+        assertThat(likeInfo.getIsLiked()).isFalse();
         assertThat(likeInfo.getLikeCount()).isEqualTo(LIKE_COUNT);
 
     }
@@ -49,7 +49,7 @@ public class LikeInfoTest {
         UserModel userModel = new UserModel(USER_NAME, USER_EMAIL, USER_BIRTH_DATE, GENDER);
         ReflectionTestUtils.setField(userModel, "id", USER_ID);
         // act
-        LikeInfo likeInfo = LikeInfo.from(null, 0, userModel);
+        LikeInfo likeInfo = LikeInfo.from(null, 0, false );
         // assert
         assertThat(likeInfo.getProductId()).isNull();
         assertThat(likeInfo.getIsLiked()).isFalse();

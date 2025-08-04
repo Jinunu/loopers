@@ -1,6 +1,7 @@
 package com.loopers.domain.product;
 
 import com.loopers.domain.brand.Brand;
+import com.loopers.domain.like.LikeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,7 +20,9 @@ public class ProductInfo {
 
     private final int likeCount;
 
-    public static ProductInfo from(Product product, Brand brand, int likeCount) {
+    private final boolean isLiked;
+
+    public static ProductInfo from(Product product, Brand brand, LikeInfo likeInfo) {
         return new ProductInfo(
                 product.getId(),
                 product.getName(),
@@ -29,7 +32,8 @@ public class ProductInfo {
                 brand.getId(),
                 brand.getName(),
                 brand.getImageUrl(),
-                likeCount
+                likeInfo.getLikeCount(),
+                likeInfo.getIsLiked()
         );
     }
 
