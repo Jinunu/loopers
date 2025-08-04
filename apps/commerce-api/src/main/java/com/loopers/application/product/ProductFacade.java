@@ -12,6 +12,7 @@ import com.loopers.domain.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,6 +32,18 @@ public class ProductFacade {
         boolean hasLiked = likeService.hasLiked(productId, loginId);
         LikeInfo likeInfo = LikeInfo.from(productId, likeCount, hasLiked);
         return productInfoService.createProductInfo(product, brand,  likeInfo);
+    }
+
+
+    public List<ProductInfo> getProductInfoList(Long loginId) {
+        List<Product> products = productService.getProducts();
+        List<ProductInfo> productInfos = new ArrayList<>();
+        for (Product product : products) {
+            ProductInfo productInfo = getProductInfo(product.getId(), loginId);
+            productInfos.add(productInfo);
+        }
+
+        return productInfos;
     }
 
 }
