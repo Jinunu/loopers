@@ -18,6 +18,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +31,7 @@ public class ProductFacadeTest {
 
     private static final String PRODUCT_NAME = "신발";
     private static final String PRODUCT_IMAGE_URL = "https://example.com/image.jpg";
-    private static final int PRODUCT_PRICE = 10000;
+    private static final BigDecimal PRODUCT_PRICE = new BigDecimal("10000");
     private static final int PRODUCT_QUANTITY = 10;
 
     private static final String BRAND_NAME = "나이키";

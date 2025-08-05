@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class BrandServiceIntegrationTest {
 
     private static final String PRODUCT_NAME = "신발";
     private static final String PRODUCT_IMAGE_URL = "https://example.com/image.jpg";
-    private static final int PRODUCT_PRICE = 10000;
+    private static final BigDecimal PRODUCT_PRICE = new BigDecimal("10000");
     private static final int PRODUCT_QUANTITY = 10;
     private static final Long PRODUCT_ID = 123L;
 
@@ -120,8 +121,8 @@ public class BrandServiceIntegrationTest {
         ReflectionTestUtils.setField(brand1, "id", 1L);
         ReflectionTestUtils.setField(brand2, "id", 2L);
 
-        Product product1 = Product.of("나이키 신발", "nike-shoe.jpg", 89000, 5, brand1.getId());
-        Product product2 = Product.of("아디다스 운동화", "adidas-shoe.jpg", 79000, 3, brand2.getId());
+        Product product1 = Product.of("나이키 신발", "nike-shoe.jpg", new BigDecimal("89000"), 5, brand1.getId());
+        Product product2 = Product.of("아디다스 운동화", "adidas-shoe.jpg", new BigDecimal("79000"), 3, brand2.getId());
         ReflectionTestUtils.setField(product1, "id", 1L);
         ReflectionTestUtils.setField(product2, "id", 2L);
 

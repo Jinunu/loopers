@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BrandTest {
@@ -27,7 +29,7 @@ public class BrandTest {
         String productImageUrl = "https://example.com/image.jpg";
         String brandImageUrl = "https://example.com/image.jpg";
         String name = "신발";
-        int price = 10000;
+        BigDecimal price =  new BigDecimal("10000");
         int quantity = 10;
 
 

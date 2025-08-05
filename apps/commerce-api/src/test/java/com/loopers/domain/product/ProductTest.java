@@ -7,13 +7,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ProductTest {
     private static final String PRODUCT_NAME = "신발";
     private static final String PRODUCT_IMAGE_URL = "https://example.com/image.jpg";
-    private static final int PRODUCT_PRICE = 10000;
+    private static final BigDecimal PRODUCT_PRICE = new BigDecimal("10000") ;
     private static final int PRODUCT_QUANTITY = 10;
     private static final Long PRODUCT_ID = 123L;
 
@@ -22,7 +24,7 @@ public class ProductTest {
     void createProduct() {
         String name = "신발";
         String imageUrl = "https://example.com/image.jpg";
-        int price = 10000;
+        BigDecimal price =  new BigDecimal("10000") ;
         int quantity = 10;
 
         Product product = Product.of(name, imageUrl, price, quantity, 1L);

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -15,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class ProductInfoServiceTest {
     private static final String PRODUCT_NAME = "신발";
     private static final String PRODUCT_IMAGE_URL = "https://example.com/image.jpg";
-    private static final int PRODUCT_PRICE = 10000;
+    private static final BigDecimal PRODUCT_PRICE = new BigDecimal("10000");
     private static final int PRODUCT_QUANTITY = 10;
     private static final Long PRODUCT_ID = 123L;
 

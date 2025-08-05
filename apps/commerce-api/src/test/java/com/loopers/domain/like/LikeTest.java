@@ -6,6 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +18,7 @@ public class LikeTest {
     @Test
     public void likeProduct() {
         // arrange
-        Product product = Product.of("Test Product", "https://example.com/image.jpg", 10000, 10, 1L);
+        Product product = Product.of("Test Product", "https://example.com/image.jpg", new BigDecimal("10000"), 10, 1L);
         ReflectionTestUtils.setField(product, "id", 1L);
         UserModel userModel = new UserModel("testuser", "shwlsdn@naver.com", "2001-01-01", "M");
         ReflectionTestUtils.setField(userModel, "id", 1L);
@@ -34,7 +36,7 @@ public class LikeTest {
     @Test
     public void isLiked_ReturnsTrue_WhenUserIsSame() {
         // arrange
-        Product product = Product.of("Test Product", "https://example.com/image.jpg", 10000, 10, 1L);
+        Product product = Product.of("Test Product", "https://example.com/image.jpg", new BigDecimal("10000"), 10, 1L);
         ReflectionTestUtils.setField(product, "id", 1L);
         UserModel userModel = new UserModel("testuser", "shwlsdn@naver.com", "2001-01-01", "M");
         ReflectionTestUtils.setField(userModel, "id", 1L);
@@ -53,7 +55,7 @@ public class LikeTest {
     @Test
     public void isLiked_ReturnsFalse_WhenUserIsDifferent() {
         // arrange
-        Product product = Product.of("Test Product", "https://example.com/image.jpg", 10000, 10, 1L);
+        Product product = Product.of("Test Product", "https://example.com/image.jpg", new BigDecimal("10000"), 10, 1L);
         ReflectionTestUtils.setField(product, "id", 1L);
         UserModel userModel = new UserModel("testuser", "shwlsdn@naver.com", "2001-01-01", "M");
         ReflectionTestUtils.setField(userModel, "id", 1L);

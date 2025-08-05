@@ -6,6 +6,8 @@ import com.loopers.support.error.ErrorType;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "product")
 @Getter
@@ -14,14 +16,14 @@ public class Product  extends BaseEntity {
 
     private String name;
     private String imageUrl;
-    private int price;
+    private BigDecimal price;
     private int quantity;
     @Column(name = "brand_id", nullable = false)
     private Long brandId;
     protected Product() {
     }
 
-    protected Product(String name, String imageUrl, int price, int quantity, Long brandId) {
+    protected Product(String name, String imageUrl, BigDecimal price, int quantity, Long brandId) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.price = price;
@@ -33,7 +35,7 @@ public class Product  extends BaseEntity {
     }
 
 
-    public static Product of(String name, String imageUrl, int price, int quantity, Long brandId) {
+    public static Product of(String name, String imageUrl, BigDecimal price, int quantity, Long brandId) {
 
         return new Product(name, imageUrl, price, quantity, brandId);
     }

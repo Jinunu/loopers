@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -31,7 +32,7 @@ public class LikeServiceIntegrationTest {
 
     private static final String PRODUCT_NAME = "신발";
     private static final String PRODUCT_IMAGE_URL = "https://example.com/image.jpg";
-    private static final int PRODUCT_PRICE = 10000;
+    private static final BigDecimal PRODUCT_PRICE = new BigDecimal("10000");
     private static final int PRODUCT_QUANTITY = 10;
 
     @Autowired

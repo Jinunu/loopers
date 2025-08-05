@@ -5,6 +5,7 @@ import com.loopers.domain.like.LikeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -13,7 +14,7 @@ public class ProductInfo {
     private final Long productId;
     private final String productName;
     private final String productImageUrl;
-    private final int price;
+    private final BigDecimal price;
     private final int quantity;
     private final ZonedDateTime createdAt;
 

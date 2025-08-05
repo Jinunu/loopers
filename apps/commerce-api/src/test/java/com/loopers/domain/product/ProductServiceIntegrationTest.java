@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class ProductServiceIntegrationTest {
 
     private static final String PRODUCT_NAME = "신발";
     private static final String PRODUCT_IMAGE_URL = "https://example.com/image.jpg";
-    private static final int PRODUCT_PRICE = 10000;
+    private static final BigDecimal PRODUCT_PRICE = new BigDecimal("10000");
     private static final int PRODUCT_QUANTITY = 10;
     private static final Long PRODUCT_ID = 123L;
 
@@ -74,8 +75,8 @@ public class ProductServiceIntegrationTest {
     void getProductList() {
         // arrange
         List<Product> products = List.of(
-                createProduct(1L, "나이키 신발", "nike-shoe.jpg", 89000, 5),
-                createProduct(2L, "아디다스 운동화", "adidas-shoe.jpg", 79000, 3)
+                createProduct(1L, "나이키 신발", "nike-shoe.jpg", new BigDecimal("89000"), 5),
+                createProduct(2L, "아디다스 운동화", "adidas-shoe.jpg", new BigDecimal("79000"), 3)
         );
 
         doReturn(products)
@@ -106,7 +107,7 @@ public class ProductServiceIntegrationTest {
 
     }
 
-    private Product createProduct(Long id, String name, String imageUrl, int price, int quantity) {
+    private Product createProduct(Long id, String name, String imageUrl, BigDecimal price, int quantity) {
         Product product = Product.of(name, imageUrl, price, quantity, 1L);
         ReflectionTestUtils.setField(product, "id", id);
         return product;
