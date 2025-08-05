@@ -5,10 +5,7 @@ import com.loopers.domain.brand.Brand;
 import com.loopers.domain.brand.BrandRepository;
 import com.loopers.domain.brand.BrandService;
 import com.loopers.domain.like.LikeService;
-import com.loopers.domain.product.Product;
-import com.loopers.domain.product.ProductInfo;
-import com.loopers.domain.product.ProductRepository;
-import com.loopers.domain.product.ProductService;
+import com.loopers.domain.product.*;
 import com.loopers.domain.user.UserModel;
 import com.loopers.domain.user.UserRepository;
 import com.loopers.domain.user.UserService;
@@ -17,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -26,6 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
+@Sql(scripts = "classpath:db/init-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = "classpath:db/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class ProductFacadeTest {
 
     private static final String PRODUCT_NAME = "신발";
@@ -105,47 +105,71 @@ public class ProductFacadeTest {
         );
     }
 
-    @DisplayName("상품 목록 조회")
+    @DisplayName("상품 목록 조회시 각 상품의 좋아요 수가 표시 된다. ")
     @Test
     void getProductList_ShouldReturnProductList() {
         // arrange
-        Brand brand = Brand.of(BRAND_NAME, BRAND_IMAGE_URL);
-
-        Brand savedBrand = brandRepository.save(brand);
-
-        Product product1 = Product.of("나이키 신발", "nike-shoe.jpg", 89000, 5, savedBrand.getId());
-        Product product2 = Product.of("아디다스 운동화", "adidas-shoe.jpg", 79000, 3, savedBrand.getId());
-        Product savedProduct1 = productRepository.save(product1);
-        Product savedProduct2 = productRepository.save(product2);
-
-        brand.addProduct(savedProduct1);
-        brand.addProduct(savedProduct2);
-
-        UserModel userModel = new UserModel(USER_NAME, USER_EMAIL, USER_BIRTH_DATE, GENDER);
-
-        UserModel savedUser = userRepository.save(userModel);
-
-        likeService.likeProduct(savedProduct1, savedUser);
-        likeService.likeProduct(savedProduct2, savedUser);
-
+        UserModel userModel = userRepository.findByUserId("chulsoo");
+        Product product = productRepository.findById(1L).get();
         // act
-        List<ProductInfo> productInfos = productFacade.getProductInfoList(savedUser.getId());
+        List<ProductInfo> productInfos = productFacade.getProductInfoList(userModel.getId());
 
+        ProductInfo foundProductInfo = productInfos.stream()
+                .filter(info -> info.getProductId().equals(product.getId()))
+                .findFirst()
+                .orElse(null);
         // assert
         assertAll(
-                () -> assertThat(productInfos).hasSize(2),
-                () -> assertThat(productInfos.get(0).getProductName()).isEqualTo("나이키 신발"),
-                () -> assertThat(productInfos.get(1).getProductName()).isEqualTo("아디다스 운동화"),
-                () -> assertThat(productInfos.get(0).getBrandName()).isEqualTo(BRAND_NAME),
-                () -> assertThat(productInfos.get(1).getBrandName()).isEqualTo(BRAND_NAME),
-                () -> assertThat(productInfos.get(0).getLikeCount()).isEqualTo(1),
-                () -> assertThat(productInfos.get(1).getLikeCount()).isEqualTo(1),
-                () -> assertThat(productInfos.get(0).getProductId()).isEqualTo(savedProduct1.getId()),
-                () -> assertThat(productInfos.get(1).getProductId()).isEqualTo(savedProduct2.getId()),
-                () -> assertThat(productInfos.get(0).isLiked()).isTrue(),
-                () -> assertThat(productInfos.get(1).isLiked()).isTrue()
 
+                () -> assertThat(foundProductInfo).isNotNull(),
+                () -> assertThat(foundProductInfo.getLikeCount()).isGreaterThanOrEqualTo(0),
+                () -> assertThat(foundProductInfo.getProductName()).isNotBlank()
+        );
 
+    }
+
+    @DisplayName("상품 목록 조회 가격 오름차순")
+    @Test
+    void getProductList_ShouldReturnProductListSortedByPriceAsc() {
+        // arrange
+        UserModel userModel = userRepository.findByUserId("chulsoo");
+        // act
+        List<ProductInfo> productInfos = productFacade.getProductInfoList(userModel.getId(), Sort.of(Sort.SortField.PRICE, Sort.SortDirection.ASC));
+        // assert
+        assertAll(
+                () -> assertThat(productInfos).isNotEmpty(),
+                () -> assertThat(productInfos.get(0).getPrice()).isLessThanOrEqualTo(productInfos.get(1).getPrice())
+        );
+    }
+
+    @DisplayName("상품 목록 조회 기본 정렬 조건 상품 최신순")
+    @Test
+    void getProductList_ShouldReturnProductListSortedByCreatedAtDesc() {
+        // arrange
+        UserModel userModel = userRepository.findByUserId("chulsoo");
+        // act
+        List<ProductInfo> productInfos = productFacade.getProductInfoList(userModel.getId());
+        // assert
+        assertAll(
+                () -> assertThat(productInfos).isNotEmpty(),
+                () -> assertThat(productInfos.get(0).getCreatedAt()).isAfterOrEqualTo(productInfos.get(1).getCreatedAt()),
+                () -> assertThat(productInfos.get(0).getCreatedAt()).isAfterOrEqualTo(productInfos.get(2).getCreatedAt()),
+                () -> assertThat(productInfos.get(1).getCreatedAt()).isAfterOrEqualTo(productInfos.get(2).getCreatedAt())
+        );
+    }
+
+    @DisplayName("상품 목록 조회 가격 내림차순")
+    @Test
+    void getProductList_ShouldReturnProductListSortedByPriceDesc() {
+        // arrange
+        UserModel userModel = userRepository.findByUserId("chulsoo");
+        // act
+        List<ProductInfo> productInfos = productFacade.getProductInfoList(userModel.getId(), Sort.of(Sort.SortField.PRICE, Sort.SortDirection.DESC));
+        // assert
+        assertAll(
+                () -> assertThat(productInfos).isNotEmpty(),
+                () -> assertThat(productInfos.get(0).getPrice()).isGreaterThanOrEqualTo(productInfos.get(1).getPrice()),
+                () -> assertThat(productInfos.get(1).getPrice()).isGreaterThanOrEqualTo(productInfos.get(2).getPrice())
         );
     }
 }

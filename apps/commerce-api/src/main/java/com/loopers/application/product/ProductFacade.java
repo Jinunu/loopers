@@ -5,15 +5,14 @@ import com.loopers.domain.brand.BrandService;
 import com.loopers.domain.like.Like;
 import com.loopers.domain.like.LikeInfo;
 import com.loopers.domain.like.LikeService;
-import com.loopers.domain.product.Product;
-import com.loopers.domain.product.ProductInfo;
-import com.loopers.domain.product.ProductInfoService;
-import com.loopers.domain.product.ProductService;
+import com.loopers.domain.product.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -36,14 +35,22 @@ public class ProductFacade {
 
 
     public List<ProductInfo> getProductInfoList(Long loginId) {
+
         List<Product> products = productService.getProducts();
         List<ProductInfo> productInfos = new ArrayList<>();
         for (Product product : products) {
             ProductInfo productInfo = getProductInfo(product.getId(), loginId);
             productInfos.add(productInfo);
         }
-
-        return productInfos;
+        return  productInfos.stream()
+                .sorted(Sort.of(Sort.SortField.LATEST, Sort.SortDirection.DESC).getComparator())
+                .toList();
     }
 
+    public List<ProductInfo> getProductInfoList(Long loginId, Sort sort) {
+        List<ProductInfo> productInfoList = getProductInfoList(loginId);
+        return productInfoList.stream()
+                .sorted(sort.getComparator())
+                .toList();
+    }
 }

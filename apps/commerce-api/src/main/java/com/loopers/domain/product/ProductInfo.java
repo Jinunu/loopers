@@ -5,6 +5,8 @@ import com.loopers.domain.like.LikeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.ZonedDateTime;
+
 @Getter
 @AllArgsConstructor
 public class ProductInfo {
@@ -13,6 +15,7 @@ public class ProductInfo {
     private final String productImageUrl;
     private final int price;
     private final int quantity;
+    private final ZonedDateTime createdAt;
 
     private final Long brandId;
     private final String brandName;
@@ -29,6 +32,7 @@ public class ProductInfo {
                 product.getImageUrl(),
                 product.getPrice(),
                 product.getQuantity(),
+                product.getCreatedAt(),
                 brand.getId(),
                 brand.getName(),
                 brand.getImageUrl(),
