@@ -1,0 +1,4 @@
+DELETE FROM likes;
+DELETE FROM product;
+DELETE FROM brand;
+DELETE FROM users;
