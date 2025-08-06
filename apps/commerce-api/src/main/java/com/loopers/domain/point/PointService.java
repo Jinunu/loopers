@@ -25,15 +25,11 @@ public class PointService {
         PointEntity point = pointRepository.findByUserId(pointInfo.userId());
         if (point == null) {
             PointEntity firstPoint = new PointEntity(pointInfo.userId(), pointInfo.point());
-         return    pointRepository.save(firstPoint);
+            return pointRepository.save(firstPoint);
         }
         point.chargeAmount(pointInfo.point());
         pointRepository.save(point);
         return point;
     }
 
-    public void usePoint(String userId, BigDecimal totalPrice) {
-
-
-    }
 }

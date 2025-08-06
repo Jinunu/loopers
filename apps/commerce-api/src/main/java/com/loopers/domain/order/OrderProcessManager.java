@@ -2,6 +2,7 @@ package com.loopers.domain.order;
 
 import com.loopers.application.order.OrderForm;
 import com.loopers.application.order.OrderRequest;
+import com.loopers.application.point.PointInfo;
 import com.loopers.domain.point.PointEntity;
 import com.loopers.domain.point.PointService;
 import com.loopers.domain.product.Product;
@@ -46,20 +47,38 @@ public class OrderProcessManager {
         Order order = orderService.createOrder(orderForm);
 
         usagePoint(order);
+
         return order;
     }
 
     public void usagePoint(Order order) {
+        order.createPayment();
         PointEntity point = pointService.getPointByUserId(order.getUserId());
-
         BigDecimal totalPrice = order.getTotalPrice();
         BigDecimal userPoint = point.getAmount();
         if (userPoint.compareTo(totalPrice) >= 0) {
             point.usePoint(totalPrice);
+            order.getPayment().updatePaymentStatus(PaymentStatus.COMPLETED);
             order.updateStatus(OrderStatus.COMPLETED);
         }else {
             order.updateStatus(OrderStatus.PENDING);
+            order.getPayment().updatePaymentStatus(PaymentStatus.FAILED);
         }
 
+    }
+    @Transactional
+    public void cancelOrder(Long orderId, String userId) {
+        orderService.findById(orderId).ifPresent(order -> {
+            // 재고 증감
+            for (OrderItem orderItem : order.getOrderItems()) {
+                Product product = orderItem.getProduct();
+                int quantity = orderItem.getQuantity();
+                product.increaseProductQuantity(quantity);
+            }
+            order.updateStatus(OrderStatus.CANCELLED);
+            order.getPayment().updatePaymentStatus(PaymentStatus.REFUNDED);
+            // 포인트 환급
+            pointService.chargePoint(new PointInfo(userId, order.getTotalPrice()));
+        });
     }
 }

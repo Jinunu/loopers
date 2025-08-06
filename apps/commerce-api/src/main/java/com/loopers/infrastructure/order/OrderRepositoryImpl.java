@@ -21,4 +21,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     public Optional<Order> findByUserId(String userId) {
         return orderJpaRepository.findByUserId(userId);
     }
+    @Override
+    public Optional<Order> findById(Long orderId) {
+        return orderJpaRepository.findById(orderId);
+    }
 }

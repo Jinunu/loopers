@@ -6,6 +6,7 @@ import com.loopers.application.point.PointInfo;
 import com.loopers.domain.order.Order;
 import com.loopers.domain.order.OrderRepository;
 import com.loopers.domain.order.OrderStatus;
+import com.loopers.domain.order.PaymentStatus;
 import com.loopers.domain.point.PointService;
 import com.loopers.domain.product.Product;
 import com.loopers.domain.product.ProductRepository;
@@ -15,14 +16,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.codec.CodecException;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -69,12 +69,12 @@ public class OrderFacadeTest {
 
 
         //assert
-        BigDecimal totalPrice = BigDecimal.ZERO;
         orderRepository.findByUserId(userId).ifPresent(order -> {
             assertThat(order.getUserId()).isEqualTo(userId);
             assertThat(order.getShippingAddress()).isEqualTo("서울시 강남구");
             assertThat(order.getOrderItems().size()).isEqualTo(2);
             assertThat(order.getStatus()).isEqualTo(OrderStatus.COMPLETED);
+            assertThat(order.getPayment().getPaymentStatus()).isEqualTo(PaymentStatus.COMPLETED);
         });
 
         // 상품 재고 확인
@@ -107,7 +107,7 @@ public class OrderFacadeTest {
 
     }
 
-    @DisplayName("주문 요청시 사용자 포인트가 부족한 경우 상품은 주문되지만 주문 상태는 PENDING")
+    @DisplayName("주문 요청시 사용자 포인트가 부족한 경우 상품은 주문되지만 주문 상태 PENDING, 결제 상태 FAILED")
     @Test
     @Transactional
     public void createOrderWithInsufficientPointsTest() {
@@ -129,6 +129,7 @@ public class OrderFacadeTest {
 
         orderRepository.findByUserId(userId).ifPresent(order -> {
             assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDING);
+            assertThat(order.getPayment().getPaymentStatus()).isEqualTo(PaymentStatus.FAILED);
             assertThat(order.getTotalPrice()).isGreaterThan(new BigDecimal("100"));
         });
     }
@@ -154,6 +155,49 @@ public class OrderFacadeTest {
         assertThat(result.getMessage()).contains("주문 수량이 재고 수량보다 많습니다.");
         assertThat(orderRepository.findByUserId(userId)).isEmpty();
 
+    }
+
+    @DisplayName("주문 취소 테스트")
+    @Test
+    @Transactional
+    public void cancelOrderTest() {
+        //arange
+        Product product1 = productRepository.findById(1L).get();
+        int product1Quantity = product1.getQuantity();
+        String userId = "chulsoo";
+        Map<Long, Integer> orderItemMap = new HashMap<>();
+
+        orderItemMap.put(1L, 2); // 상품 ID 1번을 2개 주문
+
+
+
+        OrderRequest orderRequest = new OrderRequest(orderItemMap, userId, "서울시 강남구");
+        pointService.chargePoint(new PointInfo(userId, new BigDecimal("1000000")));
+        orderFacade.processNewOrder(orderRequest);
+
+        //act
+
+        Long orderId = orderRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."))
+                .getId();
+        //assert
+        BigDecimal refundAmount = orderRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."))
+                .getTotalPrice();
+
+        orderFacade.cancelOrder(orderId, userId);
+
+        Order order = orderRepository.findById(orderId).get();
+        assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELLED);
+        assertThat(order.getPayment().getPaymentStatus()).isEqualTo(PaymentStatus.REFUNDED);
+        assertThat(pointService.getPointByUserId(userId).getAmount()).isEqualTo( new BigDecimal("1000000"));
+        assertThat(order.getTotalPrice()).isEqualTo(refundAmount);
+        assertThat(order.getUserId()).isEqualTo(userId);
+        assertThat(order.getShippingAddress()).isEqualTo("서울시 강남구");
+        assertThat(order.getOrderItems().size()).isEqualTo(1);
+        assertThat(order.getOrderItems().get(0).getProduct().getId()).isEqualTo(1L);
+        assertThat(order.getOrderItems().get(0).getQuantity()).isEqualTo(2);
+        assertThat(order.getOrderItems().get(0).getProduct().getQuantity()).isEqualTo(product1Quantity);
     }
 
 }

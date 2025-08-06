@@ -62,6 +62,7 @@ public class Order extends BaseEntity {
         order.userId = userId;
         order.shippingAddress = shippingAddress;
 
+
         for (OrderItem orderItem : orderItems) {
             order.addOrderItem(orderItem);
             if (orderItem.getProduct() == null || orderItem.getQuantity() <= 0) {
@@ -92,6 +93,13 @@ public class Order extends BaseEntity {
             throw new IllegalArgumentException("유효하지 않은 주문 상태입니다.");
         }
         this.status = status;
+    }
+
+
+    public Payment createPayment() {
+        this.payment = new Payment(userId, PaymentStatus.PENDING, totalPrice);
+        this.payment.setOrder(this);
+        return this.payment;
     }
 
 

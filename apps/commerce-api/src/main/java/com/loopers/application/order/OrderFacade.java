@@ -22,4 +22,8 @@ public class OrderFacade {
 
 
     }
+
+    public void cancelOrder(Long orderId, String userId) {
+        orderProcessManager.cancelOrder(orderId, userId);
+    }
 }

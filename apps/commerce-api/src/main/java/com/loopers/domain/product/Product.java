@@ -50,4 +50,11 @@ public class Product  extends BaseEntity {
         }
         this.quantity -= quantity;
     }
+
+    public void increaseProductQuantity(int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("수량은 0보다 커야 합니다.");
+        }
+        this.quantity += quantity;
+    }
 }
