@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,7 +34,7 @@ class PointServiceIntegrationTest {
         void returnPoint_whenUserExists() {
             // arrange
             String userId = "shwlsdn";
-            PointEntity pointEntity = new PointEntity(userId, 1000L);
+            PointEntity pointEntity = new PointEntity(userId, new BigDecimal("1000"));
             when(pointRepository.findByUserId(userId)).thenReturn(pointEntity);
             // act
             PointEntity point = pointService.getPointByUserId(pointEntity.getUserId());
@@ -75,7 +77,7 @@ class PointServiceIntegrationTest {
 
                 // act
                 CoreException result = assertThrows(CoreException.class, () -> {
-                    pointService.chargePoint(new PointInfo(nonExistUserId, 1000L));
+                    pointService.chargePoint(new PointInfo(nonExistUserId, new BigDecimal("1000")));
                 });
 
                 // assert

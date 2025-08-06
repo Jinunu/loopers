@@ -12,6 +12,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,7 +37,7 @@ public class PointV1ApiE2ETest {
 
     @BeforeEach
     void setUp() {
-        pointRepository.save(new PointEntity("shwlsdn", 1000L));
+        pointRepository.save(new PointEntity("shwlsdn", new BigDecimal("1000")));
     }
 
     @AfterEach
@@ -64,7 +66,7 @@ public class PointV1ApiE2ETest {
             // assert
             assertAll(
                     () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
-                    () -> assertThat(response.getBody().data().point()).isEqualTo(1000L)
+                    () -> assertThat(response.getBody().data().point()).isEqualTo(new BigDecimal("1000"))
             );
 
         }
@@ -101,7 +103,7 @@ public class PointV1ApiE2ETest {
                 // arrange
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.add(HEADER, "shwlsdn");
-                PointV1Dto.PointChargeRequest pointChargeRequest = new PointV1Dto.PointChargeRequest(1000L);
+                PointV1Dto.PointChargeRequest pointChargeRequest = new PointV1Dto.PointChargeRequest(new BigDecimal("1000"));
 
 
                 // act
@@ -111,14 +113,14 @@ public class PointV1ApiE2ETest {
 
                 assertAll(
                         () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
-                        () -> assertThat(response.getBody().data().point()).isEqualTo(2000L)
+                        () -> assertThat(response.getBody().data().point()).isEqualTo(new BigDecimal("2000"))
                 );
             }
 
             @DisplayName("존재하지 않는 유저로 요청할 경우, `404 Not Found` 응답을 반환한다.")
             @Test
             void returnNotFound_whenChargePointForNonExistingUser() {
-                PointV1Dto.PointChargeRequest pointChargeRequest = new PointV1Dto.PointChargeRequest(1000L);
+                PointV1Dto.PointChargeRequest pointChargeRequest = new PointV1Dto.PointChargeRequest(new BigDecimal("1000"));
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.add(HEADER, "bbbbbb");
 

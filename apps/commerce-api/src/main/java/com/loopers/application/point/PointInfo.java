@@ -3,7 +3,9 @@ package com.loopers.application.point;
 import com.loopers.domain.point.PointEntity;
 import com.loopers.interfaces.api.point.PointV1Dto;
 
-public record PointInfo(String userId, Long point) {
+import java.math.BigDecimal;
+
+public record PointInfo(String userId, BigDecimal point) {
     public static PointInfo from(PointEntity point) {
         return new PointInfo(point.getUserId(), point.getAmount());
     }

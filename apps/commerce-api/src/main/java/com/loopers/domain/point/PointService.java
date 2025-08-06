@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Component
 @RequiredArgsConstructor
 public class PointService {
@@ -26,5 +28,10 @@ public class PointService {
         point.chargeAmount(pointInfo.point());
         pointRepository.save(point);
         return point;
+    }
+
+    public void usePoint(String userId, BigDecimal totalPrice) {
+
+
     }
 }

@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -18,14 +20,14 @@ class PointEntityTest {
     class PointChargeTest {
         @DisplayName("0 이하의 정수로 포인트를 충전 시 실패한다.")
         @ParameterizedTest
-        @ValueSource(longs = {-1L, 0L, -333333L})
-        void failsPointCharge_whenAmountIsNotPositive(Long amount){
+        @ValueSource(strings = {"-1", "0", "-333333"})
+        void failsPointCharge_whenAmountIsNotPositive(String amount){
             // arrange
-            PointEntity point = new PointEntity("userId", 0L);
+            PointEntity point = new PointEntity("userId", BigDecimal.ZERO);
 
             // act
             CoreException result = assertThrows(CoreException.class, () -> {
-                point.chargeAmount(amount);
+                point.chargeAmount(new BigDecimal(amount));
             });
 
             // assert
