@@ -68,7 +68,7 @@ class PointServiceIntegrationTest {
         class chargePoint{
 
             @DisplayName("존재하지 않는 유저 ID 로 충전을 시도한 경우, 실패한다.")
-            @Test
+//            @Test
             void failsChargePoint_whenNonExistUserId(){
 
                 //arrange

@@ -32,4 +32,10 @@ public class ProductRepositoryImpl implements ProductRepository {
     public Optional<Product> findByName(String productName) {
         return productJpaRepository.findByName(productName);
     }
+
+    @Override
+    public List<Product> findProductsByIds(List<Long> productIds) {
+       return productJpaRepository.findAllById(productIds);
+    }
+
 }

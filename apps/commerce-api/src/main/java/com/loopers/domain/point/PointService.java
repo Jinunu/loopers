@@ -19,11 +19,13 @@ public class PointService {
         return pointRepository.findByUserId(userId);
     }
 
+
     @Transactional
     public PointEntity chargePoint(PointInfo pointInfo) {
         PointEntity point = pointRepository.findByUserId(pointInfo.userId());
         if (point == null) {
-          throw new CoreException(ErrorType.NOT_FOUND);
+            PointEntity firstPoint = new PointEntity(pointInfo.userId(), pointInfo.point());
+         return    pointRepository.save(firstPoint);
         }
         point.chargeAmount(pointInfo.point());
         pointRepository.save(point);

@@ -1,6 +1,5 @@
 package com.loopers.domain.product;
 
-import com.loopers.domain.brand.Brand;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import com.loopers.utils.DatabaseCleanUp;
@@ -94,14 +93,14 @@ public class ProductServiceIntegrationTest {
                 () -> assertThat(result.get(0).getId()).isEqualTo(1L),
                 () -> assertThat(result.get(0).getName()).isEqualTo("나이키 신발"),
                 () -> assertThat(result.get(0).getImageUrl()).isEqualTo("nike-shoe.jpg"),
-                () -> assertThat(result.get(0).getPrice()).isEqualTo(89000),
+                () -> assertThat(result.get(0).getPrice()).isEqualTo(new BigDecimal("89000")),
                 () -> assertThat(result.get(0).getQuantity()).isEqualTo(5),
 
                 // 두 번째 상품 검증
                 () -> assertThat(result.get(1).getId()).isEqualTo(2L),
                 () -> assertThat(result.get(1).getName()).isEqualTo("아디다스 운동화"),
                 () -> assertThat(result.get(1).getImageUrl()).isEqualTo("adidas-shoe.jpg"),
-                () -> assertThat(result.get(1).getPrice()).isEqualTo(79000),
+                () -> assertThat(result.get(1).getPrice()).isEqualTo(new BigDecimal("79000")),
                 () -> assertThat(result.get(1).getQuantity()).isEqualTo(3)
         );
 

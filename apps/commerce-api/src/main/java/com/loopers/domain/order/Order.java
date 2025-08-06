@@ -1,5 +1,6 @@
 package com.loopers.domain.order;
 
+import com.loopers.application.order.OrderForm;
 import com.loopers.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -29,7 +30,8 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    private Long userId;
+    private String userId;
+    private String shippingAddress;
 
     private BigDecimal totalPrice;
 
@@ -41,14 +43,24 @@ public class Order extends BaseEntity {
         orderItem.setOrder(this);
     }
 
-    public static Order createOrder(List<OrderItem> orderItems, Long userId) {
+    public static Order createOrder(OrderForm orderForm) {
+        List<OrderItem> orderItems = orderForm.getOrderItems();
+        String shippingAddress = orderForm.getShippingAddress();
+        String userId = orderForm.getUserId();
         if (orderItems == null || orderItems.isEmpty()) {
             throw new IllegalArgumentException("주문 항목이 비어있습니다.");
+        }
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalArgumentException("유효하지 않은 사용자 ID입니다.");
+        }
+        if (shippingAddress == null || shippingAddress.isBlank()) {
+            throw new IllegalArgumentException("유효하지 않은 배송 주소입니다.");
         }
 
         Order order = new Order();
         order.status = OrderStatus.PENDING;
         order.userId = userId;
+        order.shippingAddress = shippingAddress;
 
         for (OrderItem orderItem : orderItems) {
             order.addOrderItem(orderItem);
@@ -74,6 +86,12 @@ public class Order extends BaseEntity {
             throw new IllegalArgumentException("유효하지 않은 총 가격입니다.");
         }
         this.totalPrice = totalPrice;
+    }
+    public void updateStatus(OrderStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("유효하지 않은 주문 상태입니다.");
+        }
+        this.status = status;
     }
 
 

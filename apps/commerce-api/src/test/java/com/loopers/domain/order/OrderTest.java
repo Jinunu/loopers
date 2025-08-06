@@ -1,5 +1,6 @@
 package com.loopers.domain.order;
 
+import com.loopers.application.order.OrderForm;
 import com.loopers.domain.product.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,8 +47,12 @@ public class OrderTest {
         }
 
         // act
-        Long userId = 1L; // 예시 사용자 ID
-        Order order = Order.createOrder(orderItems, userId);
+        String userId = "chulsoo"; // 예시 사용자 ID
+        Order order = Order.createOrder(new OrderForm(
+                userId,
+                "서울시 강남구 역삼동 123-45", // 예시 배송 주소
+                orderItems
+        ));
         // assert
         assertThat(order.getOrderItems()).hasSize(2);
         assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDING);

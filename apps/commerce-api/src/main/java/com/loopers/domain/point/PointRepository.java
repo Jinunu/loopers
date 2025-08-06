@@ -4,6 +4,6 @@ package com.loopers.domain.point;
 public interface PointRepository {
     PointEntity findByUserId(String userId);
 
-    void save(PointEntity point);
+    PointEntity save(PointEntity point);
 
 }

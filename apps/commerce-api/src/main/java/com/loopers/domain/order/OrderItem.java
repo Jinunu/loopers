@@ -37,7 +37,7 @@ public class OrderItem extends BaseEntity {
         if (product.getQuantity() - quantity < 0) {
             throw new IllegalArgumentException("주문 수량이 재고 수량보다 많습니다.");
         }
-
+        product.decreaseQuantity(quantity);
         BigDecimal orderPrice = product.getPrice().multiply(BigDecimal.valueOf(quantity));
 
         return new OrderItem(product, quantity, orderPrice);
