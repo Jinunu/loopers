@@ -1,7 +1,7 @@
 package com.loopers.domain.order;
 
 import com.loopers.application.order.OrderForm;
-import com.loopers.application.order.OrderRequest;
+import com.loopers.application.order.OrderInfo;
 import com.loopers.application.point.PointInfo;
 import com.loopers.domain.point.PointEntity;
 import com.loopers.domain.point.PointService;
@@ -26,9 +26,9 @@ public class OrderProcessManager {
 
     // OrderForm으로 주문 생성
     @Transactional
-    public Order createOrder(OrderRequest orderRequest) {
-        Map<Long, Integer> orderItems = orderRequest.getOrderItems();
-        String userId = orderRequest.getUserId();
+    public Order createOrder(OrderInfo orderInfo) {
+        Map<Long, Integer> orderItems = orderInfo.getOrderItems();
+        String userId = orderInfo.getUserId();
         List<Long> productIds = new ArrayList<>(orderItems.keySet());
 
         List<Product> products = productService.findProductsByIds(productIds);
@@ -43,7 +43,7 @@ public class OrderProcessManager {
                     .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId));
             orderItemList.add(OrderItem.createOrderItem(product, quantity));
         }
-        OrderForm orderForm = new OrderForm(userId, orderRequest.getShippingAddress(), orderItemList);
+        OrderForm orderForm = new OrderForm(userId, orderInfo.getShippingAddress(), orderItemList);
         Order order = orderService.createOrder(orderForm);
 
         usagePoint(order);

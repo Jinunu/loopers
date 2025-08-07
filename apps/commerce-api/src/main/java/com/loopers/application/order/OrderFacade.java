@@ -14,8 +14,8 @@ public class OrderFacade {
     private final OrderProcessManager orderProcessManager;
 
 
-    public void processNewOrder(OrderRequest orderRequest) {
-        Order order = orderProcessManager.createOrder(orderRequest);
+    public void processNewOrder(OrderInfo orderInfo) {
+        Order order = orderProcessManager.createOrder(orderInfo);
         if (order.getStatus() == OrderStatus.PENDING) {
             throw new CoreException(ErrorType.BAD_REQUEST, "포인트가 부족합니다. 주문이 완료되지 않았습니다.");
         }

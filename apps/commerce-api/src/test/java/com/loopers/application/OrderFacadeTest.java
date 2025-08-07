@@ -1,7 +1,7 @@
 package com.loopers.application;
 
 import com.loopers.application.order.OrderFacade;
-import com.loopers.application.order.OrderRequest;
+import com.loopers.application.order.OrderInfo;
 import com.loopers.application.point.PointInfo;
 import com.loopers.domain.order.Order;
 import com.loopers.domain.order.OrderRepository;
@@ -62,10 +62,10 @@ public class OrderFacadeTest {
         int product2Quantity = product2.getQuantity();
 
 
-        OrderRequest orderRequest = new OrderRequest(orderItemMap, userId, "서울시 강남구");
+        OrderInfo orderInfo = new OrderInfo(orderItemMap, userId, "서울시 강남구");
         pointService.chargePoint(new PointInfo(userId, new BigDecimal("1000000")));
         //act
-        orderFacade.processNewOrder(orderRequest);
+        orderFacade.processNewOrder(orderInfo);
 
 
         //assert
@@ -95,11 +95,11 @@ public class OrderFacadeTest {
         Map<Long, Integer> orderItemMap = new HashMap<>();
         orderItemMap.put(1L, 0); // 상품 ID 1번을 0개 주문 (유효하지 않은 수량)
 
-        OrderRequest orderRequest = new OrderRequest(orderItemMap, userId, "서울시 강남구");
+        OrderInfo orderInfo = new OrderInfo(orderItemMap, userId, "서울시 강남구");
 
         // act
         IllegalArgumentException result = assertThrows(IllegalArgumentException.class, () -> {
-            orderFacade.processNewOrder(orderRequest);
+            orderFacade.processNewOrder(orderInfo);
         });
 
         // assert
@@ -116,12 +116,12 @@ public class OrderFacadeTest {
         Map<Long, Integer> orderItemMap = new HashMap<>();
         orderItemMap.put(1L, 2); // 상품 ID 1번을 2개 주문
 
-        OrderRequest orderRequest = new OrderRequest(orderItemMap, userId, "서울시 강남구");
+        OrderInfo orderInfo = new OrderInfo(orderItemMap, userId, "서울시 강남구");
         pointService.chargePoint(new PointInfo(userId, new BigDecimal("100"))); // 포인트를 100으로 설정
 
         // act
         CoreException result = assertThrows(CoreException.class, () -> {
-            orderFacade.processNewOrder(orderRequest);
+            orderFacade.processNewOrder(orderInfo);
         });
 
         // assert
@@ -144,11 +144,11 @@ public class OrderFacadeTest {
         Map<Long, Integer> orderItemMap = new HashMap<>();
         orderItemMap.put(1L, 100); // 상품 ID 1번을 100개 주문 (재고 부족)
 
-        OrderRequest orderRequest = new OrderRequest(orderItemMap, userId, "서울시 강남구");
+        OrderInfo orderInfo = new OrderInfo(orderItemMap, userId, "서울시 강남구");
 
         // act
         IllegalArgumentException result = assertThrows(IllegalArgumentException.class, () -> {
-            orderFacade.processNewOrder(orderRequest);
+            orderFacade.processNewOrder(orderInfo);
         });
 
         // assert
@@ -171,9 +171,9 @@ public class OrderFacadeTest {
 
 
 
-        OrderRequest orderRequest = new OrderRequest(orderItemMap, userId, "서울시 강남구");
+        OrderInfo orderInfo = new OrderInfo(orderItemMap, userId, "서울시 강남구");
         pointService.chargePoint(new PointInfo(userId, new BigDecimal("1000000")));
-        orderFacade.processNewOrder(orderRequest);
+        orderFacade.processNewOrder(orderInfo);
 
         //act
 
