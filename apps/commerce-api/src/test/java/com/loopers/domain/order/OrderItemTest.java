@@ -28,7 +28,7 @@ public class OrderItemTest {
     @BeforeEach
     public void setUp() {
         Product product1 = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, 1L);
-        ReflectionTestUtils.setField(product, "id", PRODUCT_ID);
+        ReflectionTestUtils.setField(product1, "id", PRODUCT_ID);
 
         this.products.add(product1);
         Product product2 = Product.of(PRODUCT_NAME + "2", PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, 1L);

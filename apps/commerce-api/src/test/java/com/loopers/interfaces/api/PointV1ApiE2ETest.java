@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Sql(scripts = "classpath:db/init-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class PointV1ApiE2ETest {
 
     private static final String ENDPOINT = "/api/v1/points";
@@ -37,7 +39,7 @@ public class PointV1ApiE2ETest {
 
     @BeforeEach
     void setUp() {
-        pointRepository.save(new PointEntity("shwlsdn", new BigDecimal("1000")));
+        pointRepository.save(new PointEntity("chulsoo", new BigDecimal("1000")));
     }
 
     @AfterEach
@@ -54,7 +56,7 @@ public class PointV1ApiE2ETest {
         void returnsPoint_whenSuccess() {
             // arrange
 
-            String userId = "shwlsdn";
+            String userId = "chulsoo";
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add(HEADER, userId);
 
@@ -99,10 +101,10 @@ public class PointV1ApiE2ETest {
             @DisplayName("존재하는 유저가 1000원을 충전할 경우, 충전된 보유 총량을 응답으로 반환한다.")
             @Test
             void returnTotalPoint_whenChargePointForExistingUser() {
-                // pointRepository.findByUserId에서 "shwlsdn"라는 유저를 리턴 하는 테스트 객체 만든 후 테스트 진행
+                // pointRepository.findByUserId에서 "chulsoo"라는 유저를 리턴 하는 테스트 객체 만든 후 테스트 진행
                 // arrange
                 HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.add(HEADER, "shwlsdn");
+                httpHeaders.add(HEADER, "chulsoo");
                 PointV1Dto.PointChargeRequest pointChargeRequest = new PointV1Dto.PointChargeRequest(new BigDecimal("1000"));
 
 
@@ -117,7 +119,7 @@ public class PointV1ApiE2ETest {
                 );
             }
 
-            @DisplayName("존재하지 않는 유저로 요청할 경우, `404 Not Found` 응답을 반환한다.")
+            @DisplayName("존재하지 않는 유저로 요청할 경우, `400 Bad Request` 응답을 반환한다.")
             @Test
             void returnNotFound_whenChargePointForNonExistingUser() {
                 PointV1Dto.PointChargeRequest pointChargeRequest = new PointV1Dto.PointChargeRequest(new BigDecimal("1000"));
@@ -131,7 +133,7 @@ public class PointV1ApiE2ETest {
 
                 assertAll(
                         () -> assertTrue(response.getStatusCode().is4xxClientError()),
-                        () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND),
+                        () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST),
                         () -> assertThat(response.getBody().data()).isNull()
                 );
             }
