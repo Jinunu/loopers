@@ -16,4 +16,6 @@ public interface ProductRepository {
     Optional<Product> findByName(String productName);
 
     List<Product> findProductsByIds(List<Long> productIds);
+
+    Optional<Product> findByIdWithPessimisticLock(Long productId);
 }

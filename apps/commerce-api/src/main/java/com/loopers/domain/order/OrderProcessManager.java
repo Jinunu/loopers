@@ -7,6 +7,7 @@ import com.loopers.domain.point.PointEntity;
 import com.loopers.domain.point.PointService;
 import com.loopers.domain.product.Product;
 import com.loopers.domain.product.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,18 +30,13 @@ public class OrderProcessManager {
     public Order createOrder(OrderInfo orderInfo) {
         Map<Long, Integer> orderItems = orderInfo.getOrderItems();
         String userId = orderInfo.getUserId();
-        List<Long> productIds = new ArrayList<>(orderItems.keySet());
-
-        List<Product> products = productService.findProductsByIds(productIds);
         List<OrderItem> orderItemList = new ArrayList<>();
 
         for (Map.Entry<Long, Integer> entry : orderItems.entrySet()) {
             Long productId = entry.getKey();
             Integer quantity = entry.getValue();
-            Product product = products.stream()
-                    .filter(p -> p.getId().equals(productId))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId));
+            Product product = productService.findByIdWithPessimisticLock(productId)
+                    .orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
             orderItemList.add(OrderItem.createOrderItem(product, quantity));
         }
         OrderForm orderForm = new OrderForm(userId, orderInfo.getShippingAddress(), orderItemList);

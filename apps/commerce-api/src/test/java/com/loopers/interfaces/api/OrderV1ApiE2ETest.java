@@ -1,8 +1,12 @@
 package com.loopers.interfaces.api;
 
 
+import com.loopers.application.point.PointInfo;
 import com.loopers.domain.point.PointEntity;
 import com.loopers.domain.point.PointRepository;
+import com.loopers.domain.point.PointService;
+import com.loopers.domain.product.Product;
+import com.loopers.domain.product.ProductRepository;
 import com.loopers.interfaces.api.order.OrderV1Dto;
 import com.loopers.interfaces.api.point.PointV1Dto;
 import com.loopers.utils.DatabaseCleanUp;
@@ -17,6 +21,10 @@ import org.springframework.test.context.jdbc.Sql;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -33,7 +41,11 @@ public class OrderV1ApiE2ETest {
     @Autowired
     private PointRepository pointRepository;
 
+    @Autowired
+    private PointService pointService;
 
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     private TestRestTemplate testRestTemplate;
@@ -147,5 +159,55 @@ public class OrderV1ApiE2ETest {
                     () -> assertTrue(response.getStatusCode().is4xxClientError())
             );
         }
+
+        @DisplayName("주문 동시성 테스트")
+        @Test
+        void concurrentOrderRequests() throws InterruptedException {
+            // arrange
+            int threadCount = 10;
+            ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+            CountDownLatch latch = new CountDownLatch(threadCount);
+
+            String userId = "chulsoo";
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add(HEADER, userId);
+            pointService.chargePoint(new PointInfo(userId, new BigDecimal("10000000000"))); // 충분한 포인트 충전
+
+            Map<Long, Integer> orderedItems = new HashMap<>();
+            orderedItems.put(1L, 2); // 상품 ID 1번을 2개 주문
+
+            OrderV1Dto.OrderRequestDto orderRequest =
+                    new OrderV1Dto.OrderRequestDto(orderedItems, "서울시 강남구");
+
+            Product originalProduct = productRepository.findById(1L).get();
+            int originalQuantity = originalProduct.getQuantity();
+
+            // act
+            for (int i = 0; i < threadCount; i++) {
+                executorService.submit(() -> {
+                    try {
+                        testRestTemplate.exchange(
+                                ENDPOINT,
+                                HttpMethod.POST,
+                                new HttpEntity<>(orderRequest, httpHeaders),
+                                new ParameterizedTypeReference<ApiResponse<?>>() {}
+                        );
+                    } finally {
+                        latch.countDown();
+                    }
+                });
+            }
+
+            latch.await(10, TimeUnit.SECONDS);
+            executorService.shutdown();
+
+            // assert
+            Product finalProduct = productRepository.findById(1L).get();
+            int expectedQuantity = originalQuantity - (threadCount * 2);
+
+            assertThat(finalProduct.getQuantity()).isEqualTo(expectedQuantity);
+
+        }
     }
+
 }
