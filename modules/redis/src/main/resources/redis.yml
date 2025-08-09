@@ -1,0 +1,25 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 10
+          min-idle: 5
+          max-idle: 10
+# local 프로필 설정
+---
+spring.config.activate.on-profile: local
+
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+
+# test 프로필 설정
+---
+spring.config.activate.on-profile: test
+
