@@ -1,6 +1,7 @@
 package com.loopers.application;
 
 import com.loopers.application.product.ProductFacade;
+import com.loopers.application.product.ProductPageQuery;
 import com.loopers.domain.brand.Brand;
 import com.loopers.domain.brand.BrandRepository;
 import com.loopers.domain.brand.BrandService;
@@ -9,11 +10,12 @@ import com.loopers.domain.product.*;
 import com.loopers.domain.user.UserModel;
 import com.loopers.domain.user.UserRepository;
 import com.loopers.domain.user.UserService;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,8 +114,10 @@ public class ProductFacadeTest {
         // arrange
         UserModel userModel = userRepository.findByUserId("chulsoo");
         Product product = productRepository.findById(1L).get();
+        ProductPageQuery productPageQuery = ProductPageQuery.of(userModel.getId());
         // act
-        List<ProductInfo> productInfos = productFacade.getProductInfoList(userModel.getId());
+        Page<ProductInfo> productInfoPage = productFacade.getProductInfoList(productPageQuery);
+        List<ProductInfo> productInfos = productInfoPage.getContent();
 
         ProductInfo foundProductInfo = productInfos.stream()
                 .filter(info -> info.getProductId().equals(product.getId()))
@@ -135,7 +139,12 @@ public class ProductFacadeTest {
         // arrange
         UserModel userModel = userRepository.findByUserId("chulsoo");
         // act
-        List<ProductInfo> productInfos = productFacade.getProductInfoList(userModel.getId(), Sort.of(Sort.SortField.PRICE, Sort.SortDirection.ASC));
+        ProductPageQuery productPageQuery = ProductPageQuery.of(
+                userModel.getId(),Sort.by(Sort.Direction.ASC, ProductSort.SortField.PRICE.getValue()), 0, 10);
+
+        Page<ProductInfo> productInfoPage = productFacade.getProductInfoList(productPageQuery);
+        List<ProductInfo> productInfos = productInfoPage.getContent();
+
         // assert
         assertAll(
                 () -> assertThat(productInfos).isNotEmpty(),
@@ -149,7 +158,10 @@ public class ProductFacadeTest {
         // arrange
         UserModel userModel = userRepository.findByUserId("chulsoo");
         // act
-        List<ProductInfo> productInfos = productFacade.getProductInfoList(userModel.getId());
+        ProductPageQuery productPageQuery = ProductPageQuery.of(userModel.getId());
+        Page<ProductInfo> productInfoPage = productFacade.getProductInfoList(productPageQuery);
+        List<ProductInfo> productInfos = productInfoPage.getContent();
+
         // assert
         assertAll(
                 () -> assertThat(productInfos).isNotEmpty(),
@@ -164,8 +176,12 @@ public class ProductFacadeTest {
     void getProductList_ShouldReturnProductListSortedByPriceDesc() {
         // arrange
         UserModel userModel = userRepository.findByUserId("chulsoo");
+        ProductPageQuery productPageQuery = ProductPageQuery.of(userModel.getId(), Sort.by(Sort.Direction.DESC, ProductSort.SortField.PRICE.getValue()), 0, 10);
         // act
-        List<ProductInfo> productInfos = productFacade.getProductInfoList(userModel.getId(), Sort.of(Sort.SortField.PRICE, Sort.SortDirection.DESC));
+
+        Page<ProductInfo> productInfoPage = productFacade.getProductInfoList(productPageQuery);
+        List<ProductInfo> productInfos = productInfoPage.getContent();
+
         // assert
         assertAll(
                 () -> assertThat(productInfos).isNotEmpty(),

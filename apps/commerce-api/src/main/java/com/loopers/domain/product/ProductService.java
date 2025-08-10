@@ -20,10 +20,6 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public List<Product> findProductsByIds(List<Long> productIds) {
-        return productRepository.findProductsByIds(productIds);
-    }
-
     public Optional<Product> findByIdWithPessimisticLock(Long productId) {
         return productRepository.findByIdWithPessimisticLock(productId);
 

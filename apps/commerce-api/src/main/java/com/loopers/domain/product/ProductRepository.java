@@ -1,5 +1,7 @@
 package com.loopers.domain.product;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,7 +17,8 @@ public interface ProductRepository {
 
     Optional<Product> findByName(String productName);
 
-    List<Product> findProductsByIds(List<Long> productIds);
 
     Optional<Product> findByIdWithPessimisticLock(Long productId);
+
+    Page<ProductInfoProjection> getProductInfoList(Long loginId, Pageable pageable);
 }

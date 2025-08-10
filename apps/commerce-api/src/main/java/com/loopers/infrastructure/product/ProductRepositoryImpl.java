@@ -1,8 +1,11 @@
 package com.loopers.infrastructure.product;
 
 import com.loopers.domain.product.Product;
+import com.loopers.domain.product.ProductInfoProjection;
 import com.loopers.domain.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,13 +37,13 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Product> findProductsByIds(List<Long> productIds) {
-       return productJpaRepository.findAllById(productIds);
+    public Optional<Product> findByIdWithPessimisticLock(Long productId) {
+        return productJpaRepository.findByIdWithPessimisticLock(productId);
     }
 
     @Override
-    public Optional<Product> findByIdWithPessimisticLock(Long productId) {
-        return productJpaRepository.findByIdWithPessimisticLock(productId);
+    public Page<ProductInfoProjection> getProductInfoList(Long loginId, Pageable pageable) {
+        return productJpaRepository.getProductInfoList(loginId, pageable);
     }
 
 }

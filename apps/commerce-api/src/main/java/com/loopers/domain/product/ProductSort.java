@@ -3,23 +3,23 @@ package com.loopers.domain.product;
 
 import java.util.Comparator;
 
-public class Sort {
+public class ProductSort {
     private final SortField field;
     private final SortDirection direction;
 
-    private Sort(SortField field, SortDirection direction) {
+    private ProductSort(SortField field, SortDirection direction) {
         this.field = field;
         this.direction = direction;
     }
 
-    public static Sort of(SortField field, SortDirection direction) {
+    public static ProductSort of(SortField field, SortDirection direction) {
         if (field.equals(SortField.LATEST)) {
-            return new Sort(SortField.LATEST, SortDirection.ASC);
+            return new ProductSort(SortField.LATEST, SortDirection.ASC);
         }
-        return new Sort(field, direction);
+        return new ProductSort(field, direction);
     }
 
-    public static Sort of(SortField field) {
+    public static ProductSort of(SortField field) {
         return of(field, SortDirection.ASC);
     }
 
@@ -37,13 +37,17 @@ public class Sort {
 
     public enum SortField {
         PRICE("price"),
-        LATEST("latest"),
+        LATEST("createdAt"),
         LIKES("likes");
 
         private final String value;
 
         SortField(String value) {
             this.value = value;
+        }
+
+        public String getValue() {
+            return value;
         }
 
         public static SortField fromString(String value) {
