@@ -12,6 +12,7 @@ public class ProductSort {
         this.direction = direction;
     }
 
+
     public static ProductSort of(SortField field, SortDirection direction) {
         if (field.equals(SortField.LATEST)) {
             return new ProductSort(SortField.LATEST, SortDirection.ASC);
@@ -39,7 +40,6 @@ public class ProductSort {
         PRICE("price"),
         LATEST("createdAt"),
         LIKES("likes");
-
         private final String value;
 
         SortField(String value) {
@@ -77,6 +77,10 @@ public class ProductSort {
                 }
             }
             throw new IllegalArgumentException("지원하지 않는 정렬 방향입니다: " + value);
+        }
+
+        public String getValue() {
+            return value;
         }
     }
 }

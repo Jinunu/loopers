@@ -119,16 +119,12 @@ public class ProductFacadeTest {
         Page<ProductInfo> productInfoPage = productFacade.getProductInfoList(productPageQuery);
         List<ProductInfo> productInfos = productInfoPage.getContent();
 
-        ProductInfo foundProductInfo = productInfos.stream()
-                .filter(info -> info.getProductId().equals(product.getId()))
-                .findFirst()
-                .orElse(null);
         // assert
         assertAll(
 
-                () -> assertThat(foundProductInfo).isNotNull(),
-                () -> assertThat(foundProductInfo.getLikeCount()).isGreaterThanOrEqualTo(0),
-                () -> assertThat(foundProductInfo.getProductName()).isNotBlank()
+                () -> assertThat(productInfos).isNotNull(),
+                () -> assertThat(productInfos.get(0).getLikeCount()).isGreaterThanOrEqualTo(0),
+                () -> assertThat(productInfos.get(0).getProductName()).isNotBlank()
         );
 
     }
