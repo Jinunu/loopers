@@ -1,25 +1,36 @@
 spring:
   data:
     redis:
+      repositories:
+        enabled: false
+
+datasource:
+  redis:
+    database: 0
+    master:
+      host: ${REDIS_MASTER_HOST}
+      port: ${REDIS_MASTER_PORT}
+    replicas:
+      - host: ${REDIS_REPLICA_1_HOST}
+        port: ${REDIS_REPLICA_1_PORT}
+
+---
+spring.config.activate.on-profile: local, test
+
+datasource:
+  redis:
+    master:
       host: localhost
       port: 6379
-      lettuce:
-        pool:
-          max-active: 10
-          min-idle: 5
-          max-idle: 10
-# local 프로필 설정
+    replicas:
+      - host: localhost
+        port: 6380
+
 ---
-spring.config.activate.on-profile: local
+spring.config.activate.on-profile: dev
 
-spring:
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-
-
-# test 프로필 설정
 ---
-spring.config.activate.on-profile: test
+spring.config.activate.on-profile: qa
 
+---
+spring.config.activate.on-profile: prd

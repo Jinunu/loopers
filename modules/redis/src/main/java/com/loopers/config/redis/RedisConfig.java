@@ -1,47 +1,100 @@
 package com.loopers.config.redis;
 
-import org.springframework.beans.factory.annotation.Value;
+import io.lettuce.core.ReadFrom;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.connection.RedisStaticMasterReplicaConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 @Configuration
-public class RedisConfig {
+@EnableConfigurationProperties(RedisProperties.class)
+public class RedisConfig{
+    private static final String CONNECTION_MASTER = "redisConnectionMaster";
+    public static final String REDIS_TEMPLATE_MASTER = "redisTemplateMaster";
 
+    private final RedisProperties redisProperties;
 
-    @Value("${spring.data.redis.host}")
-    private String host;
+    public RedisConfig(RedisProperties redisProperties){
+        this.redisProperties = redisProperties;
+    }
 
-    @Value("${spring.data.redis.port}")
-    private int port;
-
+    @Primary
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(host, port);
+    public LettuceConnectionFactory defaultRedisConnectionFactory() {
+        int database = redisProperties.database();
+        RedisNodeInfo master = redisProperties.master();
+        List<RedisNodeInfo> replicas = redisProperties.replicas();
+        return lettuceConnectionFactory(
+            database, master, replicas,
+            builder -> builder.readFrom(ReadFrom.REPLICA_PREFERRED)
+        );
+    }
+
+    @Qualifier(CONNECTION_MASTER)
+    @Bean
+    public LettuceConnectionFactory masterRedisConnectionFactory() {
+        int database = redisProperties.database();
+        RedisNodeInfo master = redisProperties.master();
+        List<RedisNodeInfo> replicas = redisProperties.replicas();
+        return lettuceConnectionFactory(
+            database, master, replicas,
+            builder -> builder.readFrom(ReadFrom.MASTER)
+        );
+    }
+
+    @Primary
+    @Bean
+    public RedisTemplate<String, String> defaultRedisTemplate(LettuceConnectionFactory lettuceConnectionFactory) {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+        return defaultRedisTemplate(redisTemplate, lettuceConnectionFactory);
+    }
+
+    @Qualifier(REDIS_TEMPLATE_MASTER)
+    @Bean
+    public RedisTemplate<String, String> masterRedisTemplate(
+        @Qualifier(CONNECTION_MASTER) LettuceConnectionFactory lettuceConnectionFactory
+    ) {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+        return defaultRedisTemplate(redisTemplate, lettuceConnectionFactory);
     }
 
 
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(connectionFactory);
+    private LettuceConnectionFactory lettuceConnectionFactory(
+        int database,
+        RedisNodeInfo master,
+        List<RedisNodeInfo> replicas,
+        Consumer<LettuceClientConfiguration.LettuceClientConfigurationBuilder> customizer
+    ){
+        LettuceClientConfiguration.LettuceClientConfigurationBuilder builder = LettuceClientConfiguration.builder();
+        if(customizer != null) customizer.accept(builder);
+        LettuceClientConfiguration clientConfig = builder.build();
+        RedisStaticMasterReplicaConfiguration masterReplicaConfig = new RedisStaticMasterReplicaConfiguration(master.host(), master.port());
+        masterReplicaConfig.setDatabase(database);
+        for(RedisNodeInfo r : replicas){
+            masterReplicaConfig.addNode(r.host(), r.port());
+        }
+        return new LettuceConnectionFactory(masterReplicaConfig, clientConfig);
+    }
 
-        // Key 직렬화: 문자열
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-
-        // Value 직렬화: JSON 형식
-        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-
-        // Hash Key 직렬화: 문자열
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-
-        // Hash Value 직렬화: JSON 형식
-        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
-
-        return redisTemplate;
+    private <K,V> RedisTemplate<K,V> defaultRedisTemplate(
+        RedisTemplate<K,V> template,
+        LettuceConnectionFactory connectionFactory
+    ){
+        StringRedisSerializer s = new StringRedisSerializer();
+        template.setKeySerializer(s);
+        template.setValueSerializer(s);
+        template.setHashKeySerializer(s);
+        template.setHashValueSerializer(s);
+        template.setConnectionFactory(connectionFactory);
+        return template;
     }
 }
