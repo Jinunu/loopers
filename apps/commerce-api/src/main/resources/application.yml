@@ -56,3 +56,15 @@ spring:
 springdoc:
   api-docs:
     enabled: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:db/init-data.sql
+  jpa:
+    defer-datasource-initialization: true
