@@ -103,4 +103,31 @@ public class LikeServiceIntegrationTest {
 
     }
 
+    @DisplayName("user가 좋아요를 취소하면 좋아요가 삭제되고 상품의 좋아요 수가 감소한다.")
+    @Test
+    void unlikeProduct() {
+        // arrange
+        Brand brand = Brand.of(BRAND_NAME, BRAND_IMAGE_URL);
+        Brand savedBrand = brandRepository.save(brand);
+        Product product = Product.of(PRODUCT_NAME, PRODUCT_IMAGE_URL, PRODUCT_PRICE, PRODUCT_QUANTITY, savedBrand.getId());
+        productRepository.save(product);
+        Product findProduct = productRepository.findByName(PRODUCT_NAME).orElseThrow(() -> new RuntimeException("Product not found"));
+
+        UserModel userModel = new UserModel("testuser", "shwlsdn@naver.com", "2001-01-01", "M");
+        userRepository.save(userModel);
+        UserModel savedUser = userRepository.findByUserId(userModel.getUserId());
+
+        // like first
+        likeService.likeProduct(findProduct, savedUser);
+        assertThat(likeRepository.findByProductId(findProduct.getId())).hasSize(1);
+        // act: unlike
+        likeService.unlikeProduct(findProduct, savedUser);
+
+        // assert: like removed
+        List<Like> afterUnlike = likeRepository.findByProductId(findProduct.getId());
+        assertThat(afterUnlike).isEmpty();
+        // and product like count decreased to 0 (reload product to ensure latest state)
+        Product reloaded = productRepository.findById(findProduct.getId()).orElseThrow();
+        assertThat(reloaded.getLikeCount()).isEqualTo(0);
+    }
 }
