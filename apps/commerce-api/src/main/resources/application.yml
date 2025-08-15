@@ -10,6 +10,17 @@ server:
     keep-alive-timeout: 60s # 60s
   max-http-request-header-size: 8KB
 
+logging:
+    level:
+      org:
+        springframework:
+          cache: TRACE
+          data:
+            redis: DEBUG
+    pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
 spring:
   main:
     web-application-type: servlet
@@ -23,6 +34,7 @@ spring:
       - redis.yml
       - logging.yml
       - monitoring.yml
+
 
 springdoc:
   use-fqn: true

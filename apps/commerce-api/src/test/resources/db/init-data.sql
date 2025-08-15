@@ -1,3 +1,9 @@
+DELETE FROM likes;
+DELETE FROM order_item;
+DELETE FROM product;
+DELETE FROM brand;
+DELETE FROM users;
+
 
 -- 1. 브랜드 100개 생성
 INSERT INTO brand (id, name, image_url, created_at, updated_at)
@@ -18,7 +24,13 @@ FROM (
      ) seqs;
 
 
--- 상품 생성 시간, 가격 인덱스 생성
+-- 상품 생선 시간, 가격 좋아요 카운트 인덱스 삭제 mysql
+/*ALTER TABLE product DROP INDEX idx_product_created_at;
+ALTER TABLE product DROP INDEX idx_product_price;
+ALTER TABLE product DROP INDEX idx_product_like_count;
+*/
+-- 상품 생성 시간, 가격 인덱스 카운트 인덱스  생성
+
 CREATE INDEX idx_product_created_at ON product (created_at);
 CREATE INDEX idx_product_price ON product (price);
 CREATE INDEX idx_product_like_count ON product (like_count);
