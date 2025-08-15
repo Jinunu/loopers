@@ -21,6 +21,7 @@ public interface ProductV1ApiSpec {
             @Parameter(description = "페이지 크기") Integer size,
             @Parameter(description = "정렬 필드(price, createdAt, likes)") String sortField,
             @Parameter(description = "정렬 방향(asc, desc)") String sortDirection,
+            @Parameter(description = "브랜드 ID 필터") Long brandId,
             @Parameter(description = "요청 사용자 ID (헤더)") Long userId
     );
 }

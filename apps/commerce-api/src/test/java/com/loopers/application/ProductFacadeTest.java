@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@Sql(scripts = "classpath:db/init-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//@Sql(scripts = "classpath:db/init-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "classpath:db/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class ProductFacadeTest {
 
@@ -184,5 +184,40 @@ public class ProductFacadeTest {
                 () -> assertThat(productInfos.get(0).getPrice()).isGreaterThanOrEqualTo(productInfos.get(1).getPrice()),
                 () -> assertThat(productInfos.get(1).getPrice()).isGreaterThanOrEqualTo(productInfos.get(2).getPrice())
         );
+    }
+
+    @DisplayName("상품 목록 조회 좋아요 수 내림차순")
+    @Test
+    void getProductList_ShouldReturnProductListSortedByLikeCountDesc() {
+        // arrange
+        UserModel userModel = userRepository.findByUserId("chulsoo");
+        ProductPageQuery productPageQuery = ProductPageQuery.of(userModel.getId(), Sort.by(Sort.Direction.DESC, ProductSort.SortField.LIKES.getValue()), 0, 10);
+        // act
+        Page<ProductInfo> productInfoPage = productFacade.getProductInfoList(productPageQuery);
+        List<ProductInfo> productInfos = productInfoPage.getContent();
+
+        // assert
+        assertAll(
+                () -> assertThat(productInfos).isNotEmpty(),
+                () -> assertThat(productInfos.get(0).getLikeCount()).isGreaterThanOrEqualTo(productInfos.get(1).getLikeCount()),
+                () -> assertThat(productInfos.get(1).getLikeCount()).isGreaterThanOrEqualTo(productInfos.get(2).getLikeCount())
+        );
+
+    }
+
+    @DisplayName("브랜드 ID로 상품 목록을 필터링한다")
+    @Test
+    void getProductList_FilterByBrandId() {
+        // arrange
+        UserModel userModel = userRepository.findByUserId("chulsoo");
+        Long brandId = 1L;
+        ProductPageQuery query = ProductPageQuery.of(userModel.getId(), "createdAt", "desc", 0, 10, brandId);
+
+        // act
+        Page<ProductInfo> page = productFacade.getProductInfoList(query);
+
+        // assert
+        assertThat(page.getContent()).isNotEmpty();
+        page.getContent().forEach(pi -> assertThat(pi.getBrandId()).isEqualTo(brandId));
     }
 }

@@ -34,11 +34,11 @@ public class ProductV1Controller implements ProductV1ApiSpec {
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
             @RequestParam(value = "sortField", required = false, defaultValue = "createdAt") String sortField,
             @RequestParam(value = "sortDirection", required = false, defaultValue = "desc") String sortDirection,
+            @RequestParam(value = "brandId", required = false) Long brandId,
             @RequestHeader(name = "X-USER-ID", required = false) Long userId
     ) {
 
-
-        Page<ProductInfo> productInfos = productFacade.getProductInfoList(ProductPageQuery.of(userId, sortField, sortDirection, page, size));
+        Page<ProductInfo> productInfos = productFacade.getProductInfoList(ProductPageQuery.of(userId, sortField, sortDirection, page, size, brandId));
 
         PageResponse<ProductV1Dto.ProductListItem> from = PageResponse.from(productInfos.map(ProductV1Dto.ProductListItem::from));
         return ApiResponse.success(from);

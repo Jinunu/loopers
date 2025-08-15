@@ -26,7 +26,7 @@ public class ProductFacade {
     public ProductInfo getProductInfo(Long productId, Long loginId) {
         Product product = productService.getProduct(productId);
         Brand brand = brandService.getBrandByProductId(productId);
-        int likeCount = likeService.countLike(productId);
+        int likeCount = product.getLikeCount();
         boolean hasLiked = likeService.hasLiked(productId, loginId);
         LikeInfo likeInfo = LikeInfo.from(productId, likeCount, hasLiked);
         return productInfoService.createProductInfo(product, brand,  likeInfo);

@@ -39,7 +39,7 @@ public class ProductSort {
     public enum SortField {
         PRICE("price"),
         LATEST("createdAt"),
-        LIKES("likes");
+        LIKES("likeCount");
         private final String value;
 
         SortField(String value) {

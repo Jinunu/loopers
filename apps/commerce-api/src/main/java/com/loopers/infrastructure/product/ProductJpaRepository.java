@@ -31,7 +31,7 @@ public interface ProductJpaRepository extends JpaRepository<Product, Long> {
                   , b.id                                                      as brandId
                   , b.name                                                    as brandName
                   , b.imageUrl                                                as brandImageUrl
-                  , (select count(l.id) from Like l where l.product.id = p.id) as likeCount
+                  , p.likeCount                                              as likeCount
                   , (case
                         when (select count(lk2.id)
                               from Like lk2
@@ -41,11 +41,13 @@ public interface ProductJpaRepository extends JpaRepository<Product, Long> {
                         else false end)  as liked
             FROM Product p
             LEFT JOIN Brand b ON p.brandId = b.id
+            WHERE (:brandId IS NULL OR p.brandId = :brandId)
             """,
             countQuery = """
                     select count(p.id)
                     from Product p
+                    where (:brandId IS NULL OR p.brandId = :brandId)
                     """
     )
-    Page<ProductInfoProjection> getProductInfoList(Long loginId, Pageable pageable);
+    Page<ProductInfoProjection> getProductInfoList(Long loginId, Long brandId, Pageable pageable);
 }

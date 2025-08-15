@@ -20,5 +20,5 @@ public interface ProductRepository {
 
     Optional<Product> findByIdWithPessimisticLock(Long productId);
 
-    Page<ProductInfoProjection> getProductInfoList(Long loginId, Pageable pageable);
+    Page<ProductInfoProjection> getProductInfoList(Long loginId, Long brandId, Pageable pageable);
 }

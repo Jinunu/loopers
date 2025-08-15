@@ -11,7 +11,7 @@ public class ProductQueryService {
     private final ProductRepository productRepository;
 
     public Page<ProductInfo> getProductInfoList(ProductPageQuery pageQuery) {
-        Page<ProductInfoProjection> productInfoPage = productRepository.getProductInfoList(pageQuery.loginId(), pageQuery.pageable());
+        Page<ProductInfoProjection> productInfoPage = productRepository.getProductInfoList(pageQuery.loginId(), pageQuery.brandId(), pageQuery.pageable());
         return  productInfoPage.map(proj ->
                 new ProductInfo(
                         proj.getProductId(),

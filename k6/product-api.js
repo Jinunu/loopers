@@ -76,6 +76,8 @@ const listQueries = [
   '?sortField=price&sortDirection=asc&page=0&size=10',
   '?sortField=price&sortDirection=desc&page=0&size=10',
   '?sortField=createdAt&sortDirection=desc&page=0&size=20',
+  '?sortField=likeCount&sortDirection=desc&page=0&size=20',
+  '?brandId=1&sortField=likeCount&sortDirection=desc&page=0&size=20',
 ];
 
 export default function () {

@@ -18,6 +18,10 @@ public class Product  extends BaseEntity {
     private String imageUrl;
     private BigDecimal price;
     private int quantity;
+
+    @Column(name = "like_count")
+    private int likeCount = 0;
+
     @Column(name = "brand_id", nullable = false)
     private Long brandId;
     protected Product() {
@@ -56,5 +60,15 @@ public class Product  extends BaseEntity {
             throw new IllegalArgumentException("수량은 0보다 커야 합니다.");
         }
         this.quantity += quantity;
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount += 1;
+    }
+
+    public void decreaseLikeCount() {
+        if (this.likeCount > 0) {
+            this.likeCount -= 1;
+        }
     }
 }

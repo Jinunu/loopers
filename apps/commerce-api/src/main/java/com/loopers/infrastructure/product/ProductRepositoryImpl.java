@@ -42,8 +42,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Page<ProductInfoProjection> getProductInfoList(Long loginId, Pageable pageable) {
-        return productJpaRepository.getProductInfoList(loginId, pageable);
+    public Page<ProductInfoProjection> getProductInfoList(Long loginId, Long brandId, Pageable pageable) {
+        return productJpaRepository.getProductInfoList(loginId, brandId, pageable);
     }
 
 }

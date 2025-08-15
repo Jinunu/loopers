@@ -9,6 +9,8 @@ import java.util.Optional;
 public interface LikeRepository {
     void save(Like like);
 
+    void delete(Like like);
+
     List<Like> findByProductId(Long productId);
 
     Optional<Like> findByProductIdAndUserId(Long productId, Long userId);
